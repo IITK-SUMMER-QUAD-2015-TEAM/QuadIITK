@@ -1,0 +1,82 @@
+uint16_t speed_int=INT0;
+uint16_t speed_int1=INT1;
+uint16_t speed_int2=INT4;
+uint16_t speed_int3=INT5;
+volatile unsigned long upTime1;
+volatile unsigned long downTime1;
+volatile unsigned long upTime2;
+volatile unsigned long downTime2;
+volatile unsigned long upTime3;
+volatile unsigned long downTime3;
+volatile unsigned long upTime4;
+volatile unsigned long downTime4;
+volatile int diff1;
+volatile int diff2;
+volatile int diff3;
+volatile int diff4;
+  
+  
+
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(9600);
+  pinMode(2,INPUT);
+  attachInterrupt(speed_int,speedc,RISING);
+  attachInterrupt(speed_int1,speedc2,RISING);
+  attachInterrupt(speed_int2,speedc4,RISING);
+  attachInterrupt(speed_int3,speedc6,RISING);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  Serial.print(diff1);Serial.print("\t");
+  Serial.print(diff2);Serial.print("\t");
+  Serial.print(diff3);Serial.print("\t");
+  Serial.print(diff4);Serial.print("\n");
+  delay(25);
+}
+
+void speedc(){
+  upTime1=micros();
+  attachInterrupt(speed_int,speedc1,FALLING);
+}
+
+void speedc1(){
+  downTime1=micros();
+  diff1=downTime1-upTime1;
+  attachInterrupt(speed_int,speedc,RISING);
+}
+
+void speedc2(){
+  upTime2=micros();
+  attachInterrupt(speed_int1,speedc3,FALLING);
+}
+
+void speedc3(){
+  downTime2=micros();
+  diff2=downTime2-upTime2;
+  attachInterrupt(speed_int1,speedc2,RISING);
+}
+
+void speedc4(){
+  upTime3=micros();
+  attachInterrupt(speed_int2,speedc5,FALLING);
+}
+
+void speedc5(){
+  downTime3=micros();
+  diff3=downTime3-upTime3;
+  attachInterrupt(speed_int2,speedc4,RISING);
+}
+
+void speedc6(){
+  upTime4=micros();
+  attachInterrupt(speed_int3,speedc7,FALLING);
+}
+
+void speedc7(){
+  downTime4=micros();
+  diff4=downTime4-upTime4;
+  attachInterrupt(speed_int3,speedc6,RISING);
+}
