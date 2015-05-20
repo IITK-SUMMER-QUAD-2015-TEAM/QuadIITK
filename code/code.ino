@@ -47,15 +47,20 @@ void getMPUValues(void);
 void printMPUValues(void);
 int16_t Ax, Ay, Az, Gx, Gy, Gz, temperature;
 
+extern void initReceiver(void);
+extern void printReceiverInput(void);
+
 void setup()
 {
   initI2CMPU();
+  initReceiver();
   Serial.begin(BAUD_RATE);
 }
 
 void loop()
 {
   getMPUValues();
+  printReceiverInput();
   printMPUValues();
 }
 
