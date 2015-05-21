@@ -1,4 +1,4 @@
-#define speed_int1 INT0
+/*#define speed_int1 INT0
 #define speed_int2 INT1
 #define speed_int3 INT4
 #define speed_int4 INT5
@@ -78,4 +78,4 @@ void fall4(){
   downTime4=micros();
   diff4=downTime4-upTime4;
   attachInterrupt(speed_int4,rise4,RISING);
-}
+}*/
