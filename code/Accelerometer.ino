@@ -28,7 +28,7 @@ void measureAccel() {
 }
 
 void measureAccelSum() {
-  //readMPU6000Accel();TODO:Wirte appropriate code.
+  //readMPU6050Accel();TODO:Write appropriate code. This line may not be needed..
   accelSample[XAXIS] += accelRaw[XAXIS];
   accelSample[YAXIS] += accelRaw[YAXIS];
   accelSample[ZAXIS] += accelRaw[ZAXIS];
@@ -36,7 +36,7 @@ void measureAccelSum() {
   accelSampleCount++;
 }
 
-void evaluateAccel() //WARNING:AccelSampleCount!=0
+void evaluateAccelRate() //WARNING:AccelSampleCount!=0
 {
   accelRate[XAXIS] = accelSample[XAXIS]/accelSampleCount* ACCELO_SCALING_FACTOR + accelBias[XAXIS];
   accelRate[YAXIS] = accelSample[YAXIS]/accelSampleCount* ACCELO_SCALING_FACTOR + accelBias[YAXIS];

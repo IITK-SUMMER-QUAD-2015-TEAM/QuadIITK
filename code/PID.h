@@ -1,6 +1,9 @@
 #ifndef PID_H__
 #define PID_H__
 
+#define MANUAL 0
+#define AUTOMATIC 1
+
 class PID
 {
   private:

@@ -41,6 +41,9 @@
 #define YAXIS 1
 #define ZAXIS 2
 
+extern void measureGyroSum(void);
+extern void measureAccelSum(void);
+
 int16_t gyroRaw[3];
 int16_t accelRaw[3];
 
@@ -95,4 +98,11 @@ void printMPUValues(void)
   Serial.print(accelRate[ZAXIS]); Serial.print('t');
   
   Serial.println((double)temperature / TEMP_DIVIDING_FACTOR + TEMP_OFFSET);Serial.print('\n');
+}
+
+void measureIMUSensors(void)
+{
+  getMPUValues();
+  measureGyroSum();
+  measureAccelSum();
 }

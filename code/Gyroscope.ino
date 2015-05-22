@@ -14,11 +14,11 @@ float gyroHeading =0.0;
 
 int16_t gyroSample[3] = {0,0,0};
 float gyroRate[3] = {0.0,0.0,0.0};
+int16_t gyroZero[3];
 
 uint8_t gyroSampleCount=0;
 
 extern int16_t gyroRaw[3];
-extern int16_t gyroZero[3];
 
 extern int16_t findMedianIntWithDiff(int *data, int arraySize, int * diff);
 
@@ -43,7 +43,7 @@ void measureGyro() {
 }
 
 void measureGyroSum() {
-  //readMPU6000Gyro(); //TODO: write code for readMPU6000Gyro
+  //readMPU6050Gyro(); //TODO: write code for readMPU6050Gyro.. This line may not be needed..
   gyroSample[XAXIS] += gyroRaw[XAXIS];
   gyroSample[YAXIS] += gyroRaw[YAXIS];
   gyroSample[ZAXIS] += gyroRaw[ZAXIS];
