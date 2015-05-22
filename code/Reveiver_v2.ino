@@ -25,8 +25,6 @@ class Receiver
   private:
   volatile unsigned long upTime;
   volatile unsigned long diff;
-  //void setUp(unsigned long up);
-  //void setDown(unsigned long down);
   public:
   Receiver(void);
   void setValues(unsigned long presentTime, uint8_t condition);

@@ -28,10 +28,10 @@ void setup()
 void loop()
 {
   static unsigned long int previousTime=0;
-  unsigned long int currentTime=millis();
+  unsigned long int currentTime=micros();
   unsigned long int deltaTime=currentTime-previousTime;
   measureIMUSensors();
-  printReceiverInput();
+  //printReceiverInput();
   //printMPUValues();
   if (deltaTime>10000)
   {
@@ -52,8 +52,8 @@ void Task100Hz(void)
   evaluateAccelRate();
   /*TODO: Maybe implement a fourth order filter.
   **TODO: Calculate Kinematics
-  **TODO: Estimate Vz for altitude hold
-  **TODO: Flight error calculator..(Maybe for two modes:(attitude and rate mode
-  **The former uses dual PID wheras the latter uses a single PID.
+  **TODO: Estimate Vz for altitude hold*/
+  flightErrorCalculator();
+  /*The former uses dual PID wheras the latter uses a single PID.
   **TODO: Code for calibration of offset in radio values read}*/
 }
