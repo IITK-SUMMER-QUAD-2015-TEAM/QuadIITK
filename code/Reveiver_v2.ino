@@ -47,10 +47,8 @@ void Receiver::setValues(unsigned long presentTime,uint8_t condition)
 {
   if(condition)
     upTime=presentTime;
-   else
-   {
+  else
      diff=presentTime-upTime;//presentTime here is the time when there is afalling edge.
-   }
 }
 
 void initReceiver(void);
@@ -87,12 +85,12 @@ void printReceiverInput(void)
   Serial.print(receiver4.getDiff());Serial.print("\n");
 }
 
-ISR(PCINT2_vect)
+ISR(PCINT0_vect)
 {
   //Serial.print("apple");
   static uint8_t previousValue;
   uint8_t currentValue=receiverPin();
-  uint8_t changedPins=(previousValue^currentValue)&0x0F;
+  uint8_t changedPins=(previousValue^currentValue)&0xF0;
   
   if(changedPins&RECIVER_PIN1_MASK)
     receiver1.setValues(micros(),currentValue&RECIVER_PIN1_MASK);
