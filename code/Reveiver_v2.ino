@@ -2,8 +2,8 @@
 **of reading PPM*/
 
 /*The below code is just my implementation of PinChangeInterrupt. It can be used only for pins 10,11,12&13.*/
-#define cbi(sfr, bit)(_SFR_BYTE(sfr) &= ~_BV(bit))//to clear bit at sfr address
-#define sbi(sfr, bit)(_SFR_BYTE(sfr) != _BV(bit))//to set bit at sfr address
+/*#define cbi(sfr, bit)(_SFR_BYTE(sfr) &= ~_BV(bit))//to clear bit at sfr address
+#define sbi(sfr, bit)(_SFR_BYTE(sfr) != _BV(bit))//to set bit at sfr address*/
 
 uint8_t receiverPin(void)
 {
