@@ -7,7 +7,6 @@ extern void initI2CMPU(void);
 extern void getMPUValues(void);
 
 void printMPUValues(void);
-float Ax, Ay, Az;
 int16_t temperature;
 
 extern void initReceiver(void);

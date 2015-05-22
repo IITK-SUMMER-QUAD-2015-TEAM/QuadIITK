@@ -1,6 +1,6 @@
 #define DEG_TO_RAD  0.017453292519943295769236907684886
 #define GYRO_RANGE 2*250.0
-#define GYRO_SCALING_FACTOR GYRO_RANGE*DEG_TO_RAD/65536.0
+const float GYRO_SCALING_FACTOR = GYRO_RANGE*DEG_TO_RAD/65536.0;
 
 #define FINDZERO_NUM 49//for calibration. Range can be set from 1 to 255
 
@@ -11,7 +11,7 @@
 #define ZAXIS 2
 
 float gyroHeading =0.0;
-int16_t gyroRawData[3] = {0,0,0};
+
 int16_t gyroSample[3] = {0,0,0};
 float gyroRate[3] = {0.0,0.0,0.0};
 

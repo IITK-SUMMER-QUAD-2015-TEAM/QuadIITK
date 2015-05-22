@@ -42,6 +42,7 @@
 #define ZAXIS 2
 
 int16_t gyroRaw[3];
+int16_t accelRaw[3];
 
 void initI2CMPU(void) //Begins I2C communication with  MPU using it's internal 8MHz oscillator for CLKSEL and also wakes up the MPU.
 {
@@ -72,9 +73,9 @@ void getMPUValues(void)
 
   while (!Wire.available());
 
-  Ax = (Wire.read() << 8) | Wire.read();
-  Ay = (Wire.read() << 8) | Wire.read();
-  Az = (Wire.read() << 8) | Wire.read();
+  accelRaw[XAXIS] = (Wire.read() << 8) | Wire.read();
+  accelRaw[YAXIS] = (Wire.read() << 8) | Wire.read();
+  accelRaw[ZAXIS] = (Wire.read() << 8) | Wire.read();
 
   temperature = (Wire.read() << 8) | Wire.read();
 
@@ -89,9 +90,9 @@ void printMPUValues(void)
   Serial.print(gyroRate[YAXIS]);Serial.print('\t');
   Serial.print(gyroRate[ZAXIS]); Serial.print('\t');
   
-  Serial.print((double)Ax / ACCELO_DIVIDING_FACTOR);Serial.print('\t');
-  Serial.print((double)Ay / ACCELO_DIVIDING_FACTOR);Serial.print('\t');
-  Serial.print((double)Az / ACCELO_DIVIDING_FACTOR);Serial.print('\t');
+  Serial.print(accelRate[XAXIS]); Serial.print('\t');
+  Serial.print(accelRate[YAXIS]);Serial.print('\t');
+  Serial.print(accelRate[ZAXIS]); Serial.print('t');
   
   Serial.println((double)temperature / TEMP_DIVIDING_FACTOR + TEMP_OFFSET);Serial.print('\n');
 }
