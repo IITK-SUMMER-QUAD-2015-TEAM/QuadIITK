@@ -10,10 +10,10 @@ const float GYRO_SCALING_FACTOR = GYRO_RANGE*DEG_TO_RAD/65536.0;
 #define YAXIS 1
 #define ZAXIS 2
 
-float gyroHeading =0.0;
+double gyroHeading =0.0;
 
 int16_t gyroSample[3] = {0,0,0};
-float gyroRate[3] = {0.0,0.0,0.0};
+double gyroRate[3] = {0.0,0.0,0.0};
 int16_t gyroZero[3];
 
 uint8_t gyroSampleCount=0;

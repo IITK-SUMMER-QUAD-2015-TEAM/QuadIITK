@@ -18,11 +18,19 @@ int16_t temperature;
 extern void initReceiver(void);
 extern void printReceiverInput(void);
 
+extern void initMotors(void);
+
+extern void flightErrorCalculator(void);
+
+extern void setUpPIDs(void);
+
 void setup()
 {
   initI2CMPU();
   initReceiver();
+  initMotors();
   Serial.begin(BAUD_RATE);
+  setUpPIDs();
 }
 
 void loop()
@@ -53,7 +61,8 @@ void Task100Hz(void)
   /*TODO: Maybe implement a fourth order filter.
   **TODO: Calculate Kinematics
   **TODO: Estimate Vz for altitude hold*/
-  //TODO:flightErrorCalculator();
+  flightErrorCalculator();//for roll and pitch
+  //processHeading();
   /*The former uses dual PID wheras the latter uses a single PID.
   **TODO: Code for calibration of offset in radio values read}*/
 }

@@ -13,10 +13,10 @@ class PID
   double kp, ki, kd;
   double outMin, outMax;
   bool inAuto = false;
-  uint8_t sampleTime;
+  uint8_t sampleTime;//in milliseconds
   double *input;
   public:
-  PID(double &inputVar);
+  PID(double *inputVar);
   void setTunings(double kP, double kI, double kD);
   void setSampleTime(uint8_t newSampleTime);
   void setOutputLimits(double Min, double Max);

@@ -1,6 +1,6 @@
 #include "PID.h"
 
-PID::PID(double &inputVar):input(&inputVar){};
+PID::PID(double *inputVar):input(inputVar){};
 
 void PID::setSampleTime(uint8_t newSampleTime)
 {

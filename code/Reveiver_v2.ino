@@ -85,6 +85,11 @@ float setChannelOutput(uint8_t channel)
     return (receivers[channel].getDiff()-receiverOffset[channel])*RECIEVER_SCALING_FACTOR;
 }
 
+uint16_t getThrottle(void)
+{
+  return receivers[THROTTLE].getDiff();
+}
+
 void initReceiver(void)
 {
   DDRB &=(0x0F);//setting the pins as input.
