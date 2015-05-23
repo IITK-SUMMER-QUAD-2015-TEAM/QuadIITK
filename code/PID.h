@@ -8,21 +8,21 @@ class PID
 {
   private:
   unsigned long lastTime;
-  double output;
-  double iTerm, lastInput;
-  double kp, ki, kd;
-  double outMin, outMax;
+  float output;
+  float iTerm, lastInput;
+  float kp, ki, kd;
+  float outMin, outMax;
   bool inAuto = false;
   uint8_t sampleTime;//in milliseconds
-  double *input;
+  float *input;
   public:
-  PID(double *inputVar);
-  void setTunings(double kP, double kI, double kD);
+  PID(float *inputVar);
+  void setTunings(float kP, float kI, float kD);
   void setSampleTime(uint8_t newSampleTime);
-  void setOutputLimits(double Min, double Max);
+  void setOutputLimits(float Min, float Max);
   void setMode(int mode);
   void init(void);
-  float compute(double setPoint);
+  float compute(float setPoint);
 };
 
 

@@ -7,7 +7,7 @@
 
 Servo front,left,right,back;
 
-extern double motorRollCommand,motorYawCommand,motorPitchCommand;
+extern float motorRollCommand,motorYawCommand,motorPitchCommand;
 
 void initMotors(void);
 void writeMotorValues(void);
@@ -22,9 +22,19 @@ void initMotors(void)
 
 void writeMotorValues(void)
 {
- uint16_t throttle=getThrottle();
- front.writeMicroseconds(throttle-motorPitchCommand/2+motorYawCommand);
+ int throttle=getThrottle();
+ int frontMotor,leftMotor,rightMotor,backMotor;
+ frontMotor=throttle-motorPitchCommand/2+motorYawCommand;
+ leftMotor=throttle+motorRollCommand/2-motorYawCommand;
+ rightMotor=throttle-motorRollCommand/2-motorYawCommand;
+ backMotor=throttle+motorPitchCommand/2+motorYawCommand;
+ /*Serial.print(frontMotor);Serial.print('\t');
+ Serial.print(leftMotor);Serial.print('\t');
+ Serial.print(rightMotor);Serial.print('\t');
+ Serial.print(backMotor);Serial.print('\n');*/
+ /*front.writeMicroseconds(throttle-motorPitchCommand/2+motorYawCommand);
  left.writeMicroseconds(throttle+motorRollCommand/2-motorYawCommand);
  right.writeMicroseconds(throttle-motorRollCommand/2-motorYawCommand);
  back.writeMicroseconds(throttle+motorPitchCommand/2+motorYawCommand);
+ */
 }

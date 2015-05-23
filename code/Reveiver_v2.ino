@@ -82,7 +82,7 @@ void setOffset()
 
 float setChannelOutput(uint8_t channel)
 {
-    return (receivers[channel].getDiff()-receiverOffset[channel])*RECIEVER_SCALING_FACTOR;
+    return (receivers[channel].getDiff()-receiverOffset[channel]-RECEIVER_ZERO)*RECIEVER_SCALING_FACTOR;
 }
 
 uint16_t getThrottle(void)
@@ -103,10 +103,10 @@ void initReceiver(void)
 
 void printReceiverInput(void)
 {
-  Serial.print(receivers[YAW].getDiff());Serial.print("\t");
   Serial.print(receivers[ROLL].getDiff());Serial.print("\t");
   Serial.print(receivers[PITCH].getDiff());Serial.print("\t");
-  Serial.print(receivers[THROTTLE].getDiff());Serial.print("\n");
+  Serial.print(receivers[THROTTLE].getDiff());Serial.print("\t");
+  Serial.print(receivers[YAW].getDiff());Serial.print("\n");
 }
 
 ISR(PCINT0_vect)

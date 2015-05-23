@@ -97,7 +97,7 @@ void printMPUValues(void)
   Serial.print(accelRate[YAXIS]);Serial.print('\t');
   Serial.print(accelRate[ZAXIS]); Serial.print('\t');
   
-  Serial.println((double)temperature / TEMP_DIVIDING_FACTOR + TEMP_OFFSET);Serial.print('\n');
+  Serial.println((float)temperature / TEMP_DIVIDING_FACTOR + TEMP_OFFSET);Serial.print('\n');
 }
 
 void measureIMUSensors(void)

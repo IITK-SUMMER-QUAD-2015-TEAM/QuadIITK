@@ -1,19 +1,19 @@
 #include "PID.h"
 
-PID::PID(double *inputVar):input(inputVar){};
+PID::PID(float *inputVar):input(inputVar){};
 
 void PID::setSampleTime(uint8_t newSampleTime)
 {
   sampleTime=newSampleTime;
 }
 
-void PID::setOutputLimits(double Min,double Max)
+void PID::setOutputLimits(float Min,float Max)
 {
   outMax=Max;
   outMin=Min;
 }
 
-void PID::setTunings(double kP, double kI, double kD)
+void PID::setTunings(float kP, float kI, float kD)
 {
   kp=kP;
   ki=kI*sampleTime/1000;
@@ -37,12 +37,12 @@ void PID::init(void)
     iTerm=outMin;
 }
 
-float PID::compute(double setPoint)
+float PID::compute(float setPoint)
 {
   if(!inAuto) 
-    return 0;
+    return 0.0;
 
-  double error = setPoint - *input;
+  float error = setPoint - *input;
   iTerm += (ki * error);
   
   if(iTerm> outMax) 
@@ -50,7 +50,7 @@ float PID::compute(double setPoint)
   else if(iTerm< outMin) 
     iTerm= outMin;
     
-  double dInput = (*input - lastInput);
+  float dInput = (*input - lastInput);
   
   output = kp * error + iTerm- kd * dInput;
   

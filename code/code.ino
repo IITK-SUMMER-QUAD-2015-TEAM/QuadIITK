@@ -1,4 +1,4 @@
-#define BAUD_RATE 115200 //general baud rates: 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, and 115200
+#define BAUD_RATE 9600 //general baud rates: 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, and 115200
 
 #include <Wire.h>
 #include "PID.h"
@@ -27,10 +27,10 @@ extern void setUpPIDs(void);
 void setup()
 {
   initI2CMPU();
-  //initReceiver();
-  //initMotors();
+  initReceiver();
+  initMotors();
   Serial.begin(BAUD_RATE);
-  //setUpPIDs();
+  setUpPIDs();
 }
 
 void loop()
@@ -39,7 +39,6 @@ void loop()
   unsigned long int currentTime=micros();
   unsigned long int deltaTime=currentTime-previousTime;
   measureIMUSensors();
-  //printReceiverInput();
   
   if (deltaTime>10000)
   {
@@ -51,7 +50,9 @@ void loop()
      //Task10Hz1->magnetometer and calculated yaw fusion for heading...
      //Task10Hz2&3->Battery Monitor, telemetry,OSD etc.
      //Task1Hz->Mavlink.
-     printMPUValues();
+     /**************DEBUG**************************************************************/
+     //printMPUValues();
+     //printReceiverInput();
   }
 }
 
@@ -62,7 +63,7 @@ void Task100Hz(void)
   /*TODO: Maybe implement a fourth order filter.
   **TODO: Calculate Kinematics
   **TODO: Estimate Vz for altitude hold*/
- // flightErrorCalculator();//for roll and pitch
+ flightErrorCalculator();//for roll and pitch
   //processHeading();
   /*The former uses dual PID wheras the latter uses a single PID.
   **TODO: Code for calibration of offset in radio values read}*/

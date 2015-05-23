@@ -38,9 +38,9 @@ void measureAccelSum() {
 
 void evaluateAccelRate() //WARNING:AccelSampleCount!=0
 {
-  accelRate[XAXIS] = (double)(accelSample[XAXIS]/accelSampleCount)/ ACCELO_SCALING_FACTOR + accelBias[XAXIS];
-  accelRate[YAXIS] = (double)(accelSample[YAXIS]/accelSampleCount)/ ACCELO_SCALING_FACTOR + accelBias[YAXIS];
-  accelRate[ZAXIS] = (double)(accelSample[ZAXIS]/accelSampleCount)/ ACCELO_SCALING_FACTOR + accelBias[ZAXIS];
+  accelRate[XAXIS] = (float)(accelSample[XAXIS]/accelSampleCount)/ ACCELO_SCALING_FACTOR + accelBias[XAXIS];
+  accelRate[YAXIS] = (float)(accelSample[YAXIS]/accelSampleCount)/ ACCELO_SCALING_FACTOR + accelBias[YAXIS];
+  accelRate[ZAXIS] = (float)(accelSample[ZAXIS]/accelSampleCount)/ ACCELO_SCALING_FACTOR + accelBias[ZAXIS];
   
   accelSample[XAXIS]=0;
   accelSample[YAXIS]=0;
