@@ -14,7 +14,7 @@ double gyroHeading =0.0;
 
 int16_t gyroSample[3] = {0,0,0};
 double gyroRate[3] = {0.0,0.0,0.0};
-int16_t gyroZero[3];
+int16_t gyroZero[3]={0,0,0};
 
 uint8_t gyroSampleCount=0;
 

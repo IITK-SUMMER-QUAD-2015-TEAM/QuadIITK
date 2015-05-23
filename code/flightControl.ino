@@ -12,14 +12,14 @@
 #define YAW_KI  50
 #define YAW_KD  50
 
-#define ROLL_MIN
-#define ROLL_MAX
+#define ROLL_MIN 300
+#define ROLL_MAX  300
 
-#define PITCH_MIN
-#define PITCH_MAX
+#define PITCH_MIN  300
+#define PITCH_MAX  300
 
-#define YAW_MIN
-#define YAW_MAX
+#define YAW_MIN  300
+#define YAW_MAX  300
 
 #define MANUAL 0
 #define AUTOMATIC 1

@@ -27,10 +27,10 @@ extern void setUpPIDs(void);
 void setup()
 {
   initI2CMPU();
-  initReceiver();
-  initMotors();
+  //initReceiver();
+  //initMotors();
   Serial.begin(BAUD_RATE);
-  setUpPIDs();
+  //setUpPIDs();
 }
 
 void loop()
@@ -40,7 +40,7 @@ void loop()
   unsigned long int deltaTime=currentTime-previousTime;
   measureIMUSensors();
   //printReceiverInput();
-  //printMPUValues();
+  
   if (deltaTime>10000)
   {
      Task100Hz();
@@ -51,6 +51,7 @@ void loop()
      //Task10Hz1->magnetometer and calculated yaw fusion for heading...
      //Task10Hz2&3->Battery Monitor, telemetry,OSD etc.
      //Task1Hz->Mavlink.
+     printMPUValues();
   }
 }
 
@@ -61,7 +62,7 @@ void Task100Hz(void)
   /*TODO: Maybe implement a fourth order filter.
   **TODO: Calculate Kinematics
   **TODO: Estimate Vz for altitude hold*/
-  flightErrorCalculator();//for roll and pitch
+ // flightErrorCalculator();//for roll and pitch
   //processHeading();
   /*The former uses dual PID wheras the latter uses a single PID.
   **TODO: Code for calibration of offset in radio values read}*/

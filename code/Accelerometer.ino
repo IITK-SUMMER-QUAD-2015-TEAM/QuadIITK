@@ -9,11 +9,11 @@ float accelOneG = 9.80665;
 #define STANDARD_GRAVITY 9.80665
 
 #define ACCELO_RANGE 4*STANDARD_GRAVITY //Range is +- 2g
-const float ACCELO_SCALING_FACTOR=ACCELO_RANGE/65536.0;
+const long ACCELO_SCALING_FACTOR =  16384;
 
-uint8_t accelSampleCount=0;
+int accelSampleCount=0;
 
-int16_t accelSample[3] = {0,0,0};
+long accelSample[3] = {0,0,0};
 float accelRate[3] = {0.0,0.0,0.0};
 float accelBias[3] = {0.0,0.0,0.0};
 
@@ -22,9 +22,9 @@ extern int16_t accelRaw[3];
 void measureAccel() {
   //readMPU6000Accel();TODO:Wirte appropriate code.
 
-  accelRate[XAXIS] = accelRaw[XAXIS]* ACCELO_SCALING_FACTOR + accelBias[XAXIS];
-  accelRate[YAXIS] = accelRaw[YAXIS]* ACCELO_SCALING_FACTOR + accelBias[YAXIS];
-  accelRate[ZAXIS] = accelRaw[ZAXIS]* ACCELO_SCALING_FACTOR + accelBias[ZAXIS];
+  accelRate[XAXIS] = accelRaw[XAXIS]/ ACCELO_SCALING_FACTOR + accelBias[XAXIS];
+  accelRate[YAXIS] = accelRaw[YAXIS]/ ACCELO_SCALING_FACTOR + accelBias[YAXIS];
+  accelRate[ZAXIS] = accelRaw[ZAXIS]/ ACCELO_SCALING_FACTOR + accelBias[ZAXIS];
 }
 
 void measureAccelSum() {
@@ -38,9 +38,9 @@ void measureAccelSum() {
 
 void evaluateAccelRate() //WARNING:AccelSampleCount!=0
 {
-  accelRate[XAXIS] = accelSample[XAXIS]/accelSampleCount* ACCELO_SCALING_FACTOR + accelBias[XAXIS];
-  accelRate[YAXIS] = accelSample[YAXIS]/accelSampleCount* ACCELO_SCALING_FACTOR + accelBias[YAXIS];
-  accelRate[ZAXIS] = accelSample[ZAXIS]/accelSampleCount* ACCELO_SCALING_FACTOR + accelBias[ZAXIS];
+  accelRate[XAXIS] = (double)(accelSample[XAXIS]/accelSampleCount)/ ACCELO_SCALING_FACTOR + accelBias[XAXIS];
+  accelRate[YAXIS] = (double)(accelSample[YAXIS]/accelSampleCount)/ ACCELO_SCALING_FACTOR + accelBias[YAXIS];
+  accelRate[ZAXIS] = (double)(accelSample[ZAXIS]/accelSampleCount)/ ACCELO_SCALING_FACTOR + accelBias[ZAXIS];
   
   accelSample[XAXIS]=0;
   accelSample[YAXIS]=0;

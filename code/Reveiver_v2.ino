@@ -11,11 +11,11 @@
 #define RECEIVERPIN2  11
 #define RECEIVERPIN3  12
 #define RECEIVERPIN4  13
-
+//yaw->10 throttle 11 pitch roll
 #define YAW 0
-#define ROLL 1
+#define ROLL 3
 #define PITCH 2
-#define THROTTLE 3
+#define THROTTLE 1
 #define TOTAL_CHANNELS 4//total no. of channels,can be changed in future
 
 #define RECEIVER_ZERO 1500
@@ -119,11 +119,11 @@ ISR(PCINT0_vect)
   if(changedPins&RECIVER_PIN1_MASK)
     receivers[YAW].setValues(micros(),currentValue&RECIVER_PIN1_MASK);
   if(changedPins&RECIVER_PIN2_MASK)
-    receivers[ROLL].setValues(micros(),currentValue&RECIVER_PIN2_MASK);
+    receivers[THROTTLE].setValues(micros(),currentValue&RECIVER_PIN2_MASK);
   if(changedPins&RECIVER_PIN3_MASK)
     receivers[PITCH].setValues(micros(),currentValue&RECIVER_PIN3_MASK);
   if(changedPins&RECIVER_PIN4_MASK)
-    receivers[THROTTLE].setValues(micros(),currentValue&RECIVER_PIN4_MASK);
+    receivers[ROLL].setValues(micros(),currentValue&RECIVER_PIN4_MASK);
     
   previousValue=currentValue;
 }
