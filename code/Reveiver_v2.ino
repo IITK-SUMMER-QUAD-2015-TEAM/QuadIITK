@@ -2,14 +2,6 @@
 **of reading PPM*/
 
 /*The below code is just my implementation of PinChangeInterrupt. It can be used only for pins 10,11,12&13.*/
-/*#define cbi(sfr, bit)(_SFR_BYTE(sfr) &= ~_BV(bit))//to clear bit at sfr address
-#define sbi(sfr, bit)(_SFR_BYTE(sfr) != _BV(bit))//to set bit at sfr address*/
-
-uint8_t receiverPin(void)
-{
-   return PINB;
-}
-
 #define RECIVER_PIN1_MASK  0x10
 #define RECIVER_PIN2_MASK  0x20
 #define RECIVER_PIN3_MASK  0x40
@@ -20,6 +12,26 @@ uint8_t receiverPin(void)
 #define RECEIVERPIN3  12
 #define RECEIVERPIN4  13
 
+#define YAW 0
+#define ROLL 1
+#define PITCH 2
+#define THROTTLE 3
+#define TOTAL_CHANNELS 4//total no. of channels,can be changed in future
+
+#define RECEIVER_ZERO 1500
+#define NUM_CYCLES 25
+
+#define RECIEVER_SCALING_FACTOR 0.005
+
+int8_t receiverOffset[TOTAL_CHANNELS]={0,0,0,0};
+
+void initReceiver(void);
+void printReceiverInput(void);
+
+uint8_t receiverPin(void)
+{
+   return PINB;
+}
 class Receiver
 {
   private:
@@ -30,7 +42,7 @@ class Receiver
   void setValues(unsigned long presentTime, uint8_t condition);
   unsigned long getDiff(void);
   
-} receiver1,receiver2,receiver3,receiver4;
+};
 
 Receiver::Receiver()
 {
@@ -49,38 +61,47 @@ void Receiver::setValues(unsigned long presentTime,uint8_t condition)
      diff=presentTime-upTime;//presentTime here is the time when there is afalling edge.
 }
 
-void initReceiver(void);
-void printReceiverInput(void);
+Receiver receivers[TOTAL_CHANNELS];
+
+void setOffset()
+{
+   unsigned long receiverSum[TOTAL_CHANNELS]={0,0,0,0};
+   for (int i=0;i<NUM_CYCLES;++i)
+   {
+     receiverSum[YAW]+=receivers[YAW].getDiff();
+     receiverSum[ROLL]+=receivers[ROLL].getDiff();
+     receiverSum[PITCH]+=receivers[PITCH].getDiff();
+     receiverSum[THROTTLE]+=receivers[THROTTLE].getDiff();
+     delay(20);
+   }
+   receiverOffset[YAW]=(receiverSum[YAW]/NUM_CYCLES)-RECEIVER_ZERO;
+   receiverOffset[ROLL]=(receiverSum[ROLL]/NUM_CYCLES)-RECEIVER_ZERO;
+   receiverOffset[PITCH]=(receiverSum[PITCH]/NUM_CYCLES)-RECEIVER_ZERO;
+   receiverOffset[THROTTLE]=(receiverSum[THROTTLE]/NUM_CYCLES)-RECEIVER_ZERO;
+}
+
+float setChannelOutput(uint8_t channel)
+{
+    return (receivers[channel].getDiff()-receiverOffset[channel])*RECIEVER_SCALING_FACTOR;
+}
 
 void initReceiver(void)
 {
-  /*pinMode(RECEIVERPIN1,INPUT);
-  pinMode(RECEIVERPIN2,INPUT);
-  pinMode(RECEIVERPIN3,INPUT);
-  pinMode(RECEIVERPIN4,INPUT);
-  
-  digitalWrite(RECIVER_PIN1_MASK,LOW);
-  digitalWrite(RECIVER_PIN2_MASK,LOW);
-  digitalWrite(RECIVER_PIN3_MASK,LOW);
-  digitalWrite(RECIVER_PIN4_MASK,LOW);*/
   DDRB &=(0x0F);//setting the pins as input.
   PORTB &=(0x0F);//pulling down the pins.
   
   PCICR|=(1<<PCIE0);//to enable Pin Change Interrupt on pins PCINT0-7.
-  //Serial.print(PCICR);
   PCMSK0=0xF0;//to allow pinchange interrupt on pins PCINT4-7 i.e. digital pins 10-13
-  //delay(2000);
-  //Serial.print(PCMSK0);
-  //delay(2000);
+  
   sei();
 }
 
 void printReceiverInput(void)
 {
-  Serial.print(receiver1.getDiff());Serial.print("\t");
-  Serial.print(receiver2.getDiff());Serial.print("\t");
-  Serial.print(receiver3.getDiff());Serial.print("\t");
-  Serial.print(receiver4.getDiff());Serial.print("\n");
+  Serial.print(receivers[YAW].getDiff());Serial.print("\t");
+  Serial.print(receivers[ROLL].getDiff());Serial.print("\t");
+  Serial.print(receivers[PITCH].getDiff());Serial.print("\t");
+  Serial.print(receivers[THROTTLE].getDiff());Serial.print("\n");
 }
 
 ISR(PCINT0_vect)
@@ -91,13 +112,13 @@ ISR(PCINT0_vect)
   uint8_t changedPins=(previousValue^currentValue)&0xF0;
   
   if(changedPins&RECIVER_PIN1_MASK)
-    receiver1.setValues(micros(),currentValue&RECIVER_PIN1_MASK);
+    receivers[YAW].setValues(micros(),currentValue&RECIVER_PIN1_MASK);
   if(changedPins&RECIVER_PIN2_MASK)
-    receiver2.setValues(micros(),currentValue&RECIVER_PIN2_MASK);
+    receivers[ROLL].setValues(micros(),currentValue&RECIVER_PIN2_MASK);
   if(changedPins&RECIVER_PIN3_MASK)
-    receiver3.setValues(micros(),currentValue&RECIVER_PIN3_MASK);
+    receivers[PITCH].setValues(micros(),currentValue&RECIVER_PIN3_MASK);
   if(changedPins&RECIVER_PIN4_MASK)
-    receiver4.setValues(micros(),currentValue&RECIVER_PIN4_MASK);
+    receivers[THROTTLE].setValues(micros(),currentValue&RECIVER_PIN4_MASK);
     
   previousValue=currentValue;
 }

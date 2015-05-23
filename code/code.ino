@@ -53,7 +53,7 @@ void Task100Hz(void)
   /*TODO: Maybe implement a fourth order filter.
   **TODO: Calculate Kinematics
   **TODO: Estimate Vz for altitude hold*/
-  flightErrorCalculator();
+  //TODO:flightErrorCalculator();
   /*The former uses dual PID wheras the latter uses a single PID.
   **TODO: Code for calibration of offset in radio values read}*/
 }
