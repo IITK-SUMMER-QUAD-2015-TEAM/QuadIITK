@@ -90,12 +90,18 @@ void getMPUValues(void)
 void printMPUValues(void)
 {
   Serial.print(gyroRate[XAXIS]); Serial.print('\t');
+  myFile.print(gyroRate[XAXIS]); myFile.print('\t');
   Serial.print(gyroRate[YAXIS]);Serial.print('\t');
+  myFile.print(gyroRate[YAXIS]);Serial.print('\t');
   Serial.print(gyroRate[ZAXIS]); Serial.print('\t');
+  myFile.print(gyroRate[ZAXIS]); Serial.print('\t');
   
   Serial.print(accelRate[XAXIS]); Serial.print('\t');
+myFile.print(accelRate[XAXIS]); myFile.print('\t');
   Serial.print(accelRate[YAXIS]);Serial.print('\t');
+myFile.print(accelRate[YAXIS]);myFile.print('\t');
   Serial.print(accelRate[ZAXIS]); Serial.print('\t');
+myFile.print(accelRate[ZAXIS]); myFile.print('\t');
   
   Serial.println((float)temperature / TEMP_DIVIDING_FACTOR + TEMP_OFFSET);Serial.print('\n');
 }
