@@ -42,13 +42,13 @@ extern float gyroHeading;
 
 void setUpPIDs(void)
 {
-  rollPID.setTunings(ROLL_KP,ROLL_KI,ROLL_KD);
-  pitchPID.setTunings(PITCH_KP,PITCH_KI,PITCH_KD);
-  yawPID.setTunings(YAW_KP,YAW_KI,YAW_KD);
-  
   rollPID.setSampleTime(10);
   pitchPID.setSampleTime(10);
   yawPID.setSampleTime(10);
+  
+  rollPID.setTunings(ROLL_KP,ROLL_KI,ROLL_KD);
+  pitchPID.setTunings(PITCH_KP,PITCH_KI,PITCH_KD);
+  yawPID.setTunings(YAW_KP,YAW_KI,YAW_KD);
   
   pitchPID.setOutputLimits(PITCH_MIN,PITCH_MAX);
   rollPID.setOutputLimits(ROLL_MIN,ROLL_MAX);
