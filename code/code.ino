@@ -54,7 +54,7 @@ void loop()
      //Task10Hz2&3->Battery Monitor, telemetry,OSD etc.
      //Task1Hz->Mavlink.
      /**************DEBUG**************************************************************/
-     File myFile=SD.open("test.txt",FILE_WRITE);
+     File myFile=SD.open("data.csv",FILE_WRITE);
      //printMPUValues();
      //printReceiverInput();
      myFile.close();
