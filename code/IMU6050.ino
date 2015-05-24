@@ -97,14 +97,14 @@ void printMPUValues(void)
   myFile.print(gyroRate[ZAXIS]); Serial.print(",");
   
   Serial.print(accelRate[XAXIS]); Serial.print('\t');
-myFile.print(accelRate[XAXIS]); myFile.print(",");
+  myFile.print(accelRate[XAXIS]); myFile.print(",");
   Serial.print(accelRate[YAXIS]);Serial.print('\t');
-myFile.print(accelRate[YAXIS]);myFile.print(",");
+  myFile.print(accelRate[YAXIS]);myFile.print(",");
   Serial.print(accelRate[ZAXIS]); Serial.print('\t');
-myFile.print(accelRate[ZAXIS]); myFile.print(",");
+  myFile.print(accelRate[ZAXIS]); myFile.print(",");
   
   Serial.println((float)temperature / TEMP_DIVIDING_FACTOR + TEMP_OFFSET);Serial.print('\n');
-myFile.println((float)temperature / TEMP_DIVIDING_FACTOR + TEMP_OFFSET);
+  myFile.println((float)temperature / TEMP_DIVIDING_FACTOR + TEMP_OFFSET);
 }
 
 void measureIMUSensors(void)
