@@ -1,5 +1,6 @@
 #define BAUD_RATE 9600 //general baud rates: 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, and 115200
 
+#include <SD.h>
 #include <Wire.h>
 #include "PID.h"
 
@@ -30,6 +31,8 @@ void setup()
   initReceiver();
   initMotors();
   Serial.begin(BAUD_RATE);
+  if (!SD.begin(53)) Serial.println("Initialization failed!!");
+  else Serial.println("Initialization Complete");
   setUpPIDs();
 }
 
@@ -51,8 +54,10 @@ void loop()
      //Task10Hz2&3->Battery Monitor, telemetry,OSD etc.
      //Task1Hz->Mavlink.
      /**************DEBUG**************************************************************/
+     File myFile=SD.open("test.txt",FILE_WRITE);
      //printMPUValues();
      //printReceiverInput();
+     myFile.close();
   }
 }
 
