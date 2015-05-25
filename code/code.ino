@@ -1,5 +1,7 @@
 #define BAUD_RATE 9600 //general baud rates: 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, and 115200
 
+#define SD_CARD_PIN 53
+
 #include <SD.h>
 #include <Wire.h>
 #include "PID.h"
@@ -31,7 +33,7 @@ void setup()
   initReceiver();
   initMotors();
   Serial.begin(BAUD_RATE);
-  if (!SD.begin(53)) Serial.println("Initialization failed!!");
+  if (!SD.begin(SD_CARD_PIN)) Serial.println("Initialization failed!!");
   else Serial.println("Initialization Complete");
   setUpPIDs();
 }
