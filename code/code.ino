@@ -1,10 +1,9 @@
+
 #define BAUD_RATE 9600 //general baud rates: 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, and 115200
-
 #define SD_CARD_PIN 53
-
 #include <SD.h>
+#include <SPI.h>
 #include <Wire.h>
-#include "PID.h"
 
 void Task100Hz(void);
 
@@ -16,8 +15,6 @@ extern void measureIMUSensors(void);
 extern void evaluateAccelRate(void);
 extern void evaluateGyroRate(void);
 
-int16_t temperature;
-
 extern void initReceiver(void);
 extern void printReceiverInput(void);
 
@@ -26,6 +23,9 @@ extern void initMotors(void);
 extern void flightErrorCalculator(void);
 
 extern void setUpPIDs(void);
+
+int16_t temperature;
+File myFile;
 
 void setup()
 {

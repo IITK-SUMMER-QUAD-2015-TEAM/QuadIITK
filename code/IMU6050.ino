@@ -44,6 +44,8 @@
 extern void measureGyroSum(void);
 extern void measureAccelSum(void);
 
+extern File myfile;
+
 int16_t gyroRaw[3];
 int16_t accelRaw[3];
 

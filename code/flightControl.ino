@@ -1,30 +1,28 @@
 #define RAD2DEG 57.2957795131
 
-#define ROLL_KP  0.2
+#define ROLL_KP  20
 #define ROLL_KI 0 
 #define ROLL_KD  0
 
-#define PITCH_KP  0.2
+#define PITCH_KP  20
 #define PITCH_KI  0
 #define PITCH_KD  0
 
-#define YAW_KP  0.2
+#define YAW_KP  20
 #define YAW_KI  0
 #define YAW_KD  0
 
-#define ROLL_MIN 300
+#define ROLL_MIN -300
 #define ROLL_MAX  300
 
-#define PITCH_MIN  300
+#define PITCH_MIN  -300
 #define PITCH_MAX  300
 
-#define YAW_MIN  300
+#define YAW_MIN  -300
 #define YAW_MAX  300
 
 #define MANUAL 0
 #define AUTOMATIC 1
-
-extern 
 
 PID rollPID(&gyroRate[XAXIS]);
 PID pitchPID(&gyroRate[YAXIS]);
@@ -63,11 +61,11 @@ void flightErrorCalculator(void)
   motorRollCommand = rollPID.compute(setChannelOutput(ROLL));
   motorPitchCommand = pitchPID.compute(setChannelOutput(PITCH));
   motorYawCommand = yawPID.compute(setChannelOutput(YAW));
-  
-  Serial.print(motorPitchCommand);Serial.print('\n');
-  /*Serial.print(motorCommand);Serial.print('\t');
-  Serial.print(motorRollCommand);Serial.print('\t');*/
-  
+  /*
+  Serial.print(motorPitchCommand);Serial.print('\t');
+  Serial.print(motorRollCommand);Serial.print('\t');
+  Serial.print(motorYawCommand);Serial.print('\n');
+  */
   writeMotorValues();
   //motorAxisCommandPitch = updatePID(getReceiverSIData(YAXIS), -gyroRate[YAXIS]*rotationSpeedFactor, &PID[RATE_YAXIS_PID_IDX]);
   //using gyro rates...
