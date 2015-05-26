@@ -12,13 +12,12 @@
 #define RECEIVERPIN3  12
 #define RECEIVERPIN4  13
 //yaw->10 throttle 11 pitch roll
-#define YAW 0
-#define ROLL 3
-#define PITCH 2
-#define THROTTLE 1
+#define YAW 3
+#define ROLL 0
+#define PITCH 1
+#define THROTTLE 2
 #define TOTAL_CHANNELS 4//total no. of channels,can be changed in future
 
-#define RECEIVER_ZERO 1500
 #define NUM_CYCLES 25
 
 #define RECIEVER_SCALING_FACTOR 0.005
@@ -74,15 +73,16 @@ void setOffset()
      receiverSum[THROTTLE]+=receivers[THROTTLE].getDiff();
      delay(20);
    }
-   receiverOffset[YAW]=(receiverSum[YAW]/NUM_CYCLES)-RECEIVER_ZERO;
-   receiverOffset[ROLL]=(receiverSum[ROLL]/NUM_CYCLES)-RECEIVER_ZERO;
-   receiverOffset[PITCH]=(receiverSum[PITCH]/NUM_CYCLES)-RECEIVER_ZERO;
-   receiverOffset[THROTTLE]=(receiverSum[THROTTLE]/NUM_CYCLES)-RECEIVER_ZERO;
+   receiverOffset[YAW]=(receiverSum[YAW]/NUM_CYCLES)-1500;
+   receiverOffset[ROLL]=(receiverSum[ROLL]/NUM_CYCLES)-1500;
+   receiverOffset[PITCH]=(receiverSum[PITCH]/NUM_CYCLES)-1500;
+   receiverOffset[THROTTLE]=(receiverSum[THROTTLE]/NUM_CYCLES)-1500;
 }
 
 float setChannelOutput(uint8_t channel)
 {
-    return (receivers[channel].getDiff()-receiverOffset[channel]-RECEIVER_ZERO)*RECIEVER_SCALING_FACTOR;
+    int temp=receivers[channel].getDiff()-receiverOffset[channel];
+    return (float)((temp-1500)*RECIEVER_SCALING_FACTOR);
 }
 
 uint16_t getThrottle(void)
@@ -117,13 +117,13 @@ ISR(PCINT0_vect)
   uint8_t changedPins=(previousValue^currentValue)&0xF0;
   
   if(changedPins&RECIVER_PIN1_MASK)
-    receivers[YAW].setValues(micros(),currentValue&RECIVER_PIN1_MASK);
+    receivers[ROLL].setValues(micros(),currentValue&RECIVER_PIN1_MASK);
   if(changedPins&RECIVER_PIN2_MASK)
-    receivers[THROTTLE].setValues(micros(),currentValue&RECIVER_PIN2_MASK);
+    receivers[PITCH].setValues(micros(),currentValue&RECIVER_PIN2_MASK);
   if(changedPins&RECIVER_PIN3_MASK)
-    receivers[PITCH].setValues(micros(),currentValue&RECIVER_PIN3_MASK);
+    receivers[THROTTLE].setValues(micros(),currentValue&RECIVER_PIN3_MASK);
   if(changedPins&RECIVER_PIN4_MASK)
-    receivers[ROLL].setValues(micros(),currentValue&RECIVER_PIN4_MASK);
+    receivers[YAW].setValues(micros(),currentValue&RECIVER_PIN4_MASK);
     
   previousValue=currentValue;
 }
