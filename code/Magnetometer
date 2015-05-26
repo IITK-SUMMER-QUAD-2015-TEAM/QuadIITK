@@ -7,31 +7,11 @@
 #define XAXIS 0
 #define YAXIS 1
 #define ZAXIS 2
-#define scaleVal 
+#define scaleVal 1.0
 
 double heading; 
 int16_t Magnetometer_RawVal[AXIS];
 int16_t Magnetometer_ScaledVal[AXIS];
-
-void setup() {
-  // put your setup code here, to run once:
-  init_Magnetometer();
-  //Serial.begin(9600);
-}
-
-void loop() {
-  // put your main code here, to run repeatedly:
-  getRawVal();
-  getScaledVal();
-  getHeading();
-  /*Serial.print(Magnetometer_RawVal[XAXIS]);Serial.print('\t');
-  Serial.print(Magnetometer_RawVal[YAXIS]);Serial.print('\t');
-  Serial.print(Magnetometer_RawVal[ZAXIS]);Serial.print('\t');
-  Serial.print(Magnetometer_ScaledVal[XAXIS]);Serial.print('\t');
-  Serial.print(Magnetometer_ScaledVal[YAXIS]);Serial.print('\t');
-  Serial.print(Magnetometer_ScaledVal[ZAXIS]);Serial.print('\t');
-  Serial.print(heading);Serial.print(" radians");Serial.print('\n');*/
-}
 
 void getRawVal(){
    Wire.beginTransmission(HMC5883_add);
