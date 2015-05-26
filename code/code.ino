@@ -16,8 +16,6 @@ extern void measureIMUSensors(void);
 extern void evaluateAccelRate(void);
 extern void evaluateGyroRate(void);
 
-int16_t temperature;
-
 extern void initReceiver(void);
 extern void printReceiverInput(void);
 
@@ -26,6 +24,9 @@ extern void initMotors(void);
 extern void flightErrorCalculator(void);
 
 extern void setUpPIDs(void);
+
+int16_t temperature;
+File myFile;
 
 void setup()
 {
@@ -56,7 +57,7 @@ void loop()
      //Task10Hz2&3->Battery Monitor, telemetry,OSD etc.
      //Task1Hz->Mavlink.
      /**************DEBUG**************************************************************/
-     File myFile=SD.open("data.csv",FILE_WRITE);
+     myFile=SD.open("data.csv",FILE_WRITE);
      //printMPUValues();
      //printReceiverInput();
      myFile.close();
