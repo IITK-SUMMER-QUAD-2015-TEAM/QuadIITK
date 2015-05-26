@@ -1,55 +1,63 @@
 #include<Wire.h>
 #include<Math.h>
-#define HMC5883_add 0x1E
-#define Mode_add 0x02
-#define declination_angle 0.087
-#define AXIS 3
+
+#define HMC5883_ADDRESS 0x1E
+
+#define MODE_REGEISTER_ADDRESS 0x02
+#define DECLINATION_ANGLE 0.5f
+
+#define NUM_AXIS 3
+
 #define XAXIS 0
 #define YAXIS 1
 #define ZAXIS 2
-#define scaleVal 1.0
 
-double heading; 
-int16_t Magnetometer_RawVal[AXIS];
-int16_t Magnetometer_ScaledVal[AXIS];
+#define scaleVal 0.00091743119f
 
-void getRawVal(){
-   Wire.beginTransmission(HMC5883_add);
+float heading; 
+int16_t magnetoRawVal[NUM_AXIS];
+float magnetoScaledVal[NUM_AXIS];
+
+void getMagnetoRawVal(){
+   Wire.beginTransmission(HMC5883_ADDRESS);
    Wire.write(0x03);
    Wire.endTransmission(false);
+   
    Wire.requestFrom(HMC,6,true);
    
-   Magnetometer_RawVal[XAXIS]=Wire.read()<<8|Wire.read();
-   Magnetometer_RawVal[YAXIS]=Wire.read()<<8|Wire.read();
-   Magnetometer_RawVal[ZAXIS]=Wire.read()<<8|Wire.read();
+   magnetoRawVal[XAXIS]=Wire.read()<<8|Wire.read();
+   magnetoRawVal[YAXIS]=Wire.read()<<8|Wire.read();
+   magnetoRawVal[ZAXIS]=Wire.read()<<8|Wire.read();
 }
 
 
-void init_Magnetometer(){
+void initMagneto(){
   Wire.begin();
-  Wire.beginTransmission(HMC5883_add);
-  Wire.write(Mode_add);
-  Wire.write(0x00);//continuos mode enable
+  
+  Wire.beginTransmission(HMC5883_ADDRESS);
+  Wire.write(MODE_ADDRESS);
+  Wire.write(0x00);//continuous mode enable
   Wire.endTransmission(true);
-  Wire.beginTransmission(HMC5883_add);
+  
+  Wire.beginTransmission(HMC5883_ADDRESS);
   Wire.write(0x01);
   Wire.write(0x20);//setting range to +/- 1.3 gauss.
   Wire.endTransmission(true);  
 }
 
 void getScaledVal(){
-    Magnetometer_ScaledVal[XAXIS]*=scaleVal;
-    Magnetometer_ScaledVal[YAXIS]*=scaleVal;
-    Magnetometer_ScaledVal[ZAXIS]*=scaleVal;
+    magnetoScaledVal[XAXIS]=(float)magnetoRawVal[XAXIS]*scaleVal;
+    magnetoScaledVal[YAXIS]=(float)magnetoRawVal[YAXIS]*scaleVal;
+    magnetoScaledVal[ZAXIS]=(float)magnetoRawVal[ZAXIS]*scaleVal;
 }
 
 void getHeading(){
-  heading=atan2(Magnetometer_ScaledVal[YAXIS]/Magnetometer_ScaledVal[XAXIS])*180/PI;
+  heading=atan2(magnetoScaledVal[YAXIS],magnetoScaledVal[XAXIS])*180/PI;
  
   heading+=declination_Angle;
   
-  if(heading<0)
-   heading+=2*PI;
-  if(heading>2*PI)
-   heading-=2*PI;
+  if(heading<-180)
+   heading+=360;
+  if(heading>180)
+   heading-=360;
 }
