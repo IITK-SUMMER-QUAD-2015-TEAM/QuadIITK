@@ -3,6 +3,7 @@
 #define SD_CARD_PIN 53
 
 #include <SD.h>
+#include <SPI.h>
 #include <Wire.h>
 #include "PID.h"
 
