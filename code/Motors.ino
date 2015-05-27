@@ -28,7 +28,7 @@ void writeMotorValues(void)
  frontLeftMotorCommand=throttle+motorRollCommand+motorPitchCommand+motorYawCommand;
  frontRightMotorCommand=throttle-motorRollCommand+motorPitchCommand-motorYawCommand;
  backLeftMotorCommand=throttle+motorRollCommand-motorPitchCommand-motorYawCommand;
- frontRightMotorCommand=throttle-motorRollCommand-motorPitchCommand+motorYawCommand;
+ backRightMotorCommand=throttle-motorRollCommand-motorPitchCommand+motorYawCommand;
  
  /*
  frontLeft.writeMicroseconds(frontLeftMotorCommand);
