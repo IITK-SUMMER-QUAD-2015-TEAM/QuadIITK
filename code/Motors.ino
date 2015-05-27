@@ -1,14 +1,14 @@
 #include<Servo.h>
 //Write pins..
-#define MOTOR_FRONT_LEFT_PIN 2
-#define MOTOR_FRONT_RIGHT_PIN  3
-#define MOTOR_BACK_RIGHT_PIN 4
-#define MOTOR_BACK_LEFT_PIN  5
+#define MOTOR_FRONT_LEFT_PIN 4
+#define MOTOR_FRONT_RIGHT_PIN  5
+#define MOTOR_BACK_RIGHT_PIN 6
+#define MOTOR_BACK_LEFT_PIN  7
 
 Servo frontLeft,frontRight,backLeft,backRight;
 
 extern float motorRollCommand,motorYawCommand,motorPitchCommand;
-uint16_t  frontLeftMotorCommand=1000,frontRightMotorCommand=1000,backLeftMotorCommand=1000,backRightMotorCommand=1000;
+int16_t  frontLeftMotorCommand=1000,frontRightMotorCommand=1000,backLeftMotorCommand=1000,backRightMotorCommand=1000;
 
 void initMotors(void);
 void writeMotorValues(void);
@@ -28,20 +28,33 @@ void writeMotorValues(void)
  frontLeftMotorCommand=throttle+motorRollCommand+motorPitchCommand+motorYawCommand;
  frontRightMotorCommand=throttle-motorRollCommand+motorPitchCommand-motorYawCommand;
  backLeftMotorCommand=throttle+motorRollCommand-motorPitchCommand-motorYawCommand;
- frontRightMotorCommand=throttle-motorRollCommand-motorPitchCommand+motorYawCommand;
+ backRightMotorCommand=throttle-motorRollCommand-motorPitchCommand+motorYawCommand;
  
- /*
- frontLeft.writeMicroseconds(frontLeftMotorCommand);
+ 
+ /*frontLeft.writeMicroseconds(frontLeftMotorCommand);
  frontRight.writeMicroseconds(frontRightMotorCommand);
  backLeft.writeMicroseconds(backLeftMotorCommand);
- backRight.writeMicroseconds(backRightMotorCommand);
- */
+ backRight.writeMicroseconds(backRightMotorCommand);*/
+ //printMotorCommands();
+}
+
+void setMotorsZero(void)
+{
+ frontLeftMotorCommand=0;
+ frontRightMotorCommand=0;
+ backLeftMotorCommand=0;
+ frontRightMotorCommand=0;
+  
+ frontLeft.writeMicroseconds(1000);
+ frontRight.writeMicroseconds(1000);
+ backLeft.writeMicroseconds(1000);
+ backRight.writeMicroseconds(1000);
 }
 
 void printMotorCommands(void)
 {
   Serial.print(frontLeftMotorCommand);Serial.print('\t');
   Serial.print(frontRightMotorCommand);Serial.print('\t');
-  Serial.print(backRightMotorCommand);Serial.print('\t');
-  Serial.print(backLeftMotorCommand);Serial.print('\n');
+  Serial.print(backLeftMotorCommand);Serial.print('\t');
+  Serial.print(backRightMotorCommand);Serial.print('\n');
 }

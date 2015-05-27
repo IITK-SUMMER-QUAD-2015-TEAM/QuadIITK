@@ -9,7 +9,7 @@ class PID
   private:
   unsigned long lastTime;
   float output;
-  float iTerm, lastInput;
+  float lastInput;
   float kp, ki, kd;
   float outMin, outMax;
   bool inAuto = false;
@@ -17,6 +17,7 @@ class PID
   float *input;
   public:
   PID(float *inputVar);
+  float iTerm;
   void setTunings(float kP, float kI, float kD);
   void setSampleTime(uint8_t newSampleTime);
   void setOutputLimits(float Min, float Max);

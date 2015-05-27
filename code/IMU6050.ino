@@ -51,7 +51,7 @@ int16_t accelRaw[3];
 
 void initI2CMPU(void) //Begins I2C communication with  MPU using it's internal 8MHz oscillator for CLKSEL and also wakes up the MPU.
 {
-  Wire.begin(MPU_ADDRESS);
+  Wire.begin();
 
   Wire.beginTransmission(MPU_ADDRESS);
 
@@ -76,17 +76,20 @@ void getMPUValues(void)
 
   Wire.requestFrom(MPU_ADDRESS, 14, true);
 
-  while (!Wire.available());
+  if (Wire.available())
+  {
+    accelRaw[XAXIS] = (Wire.read() << 8) | Wire.read();
+    accelRaw[YAXIS] = (Wire.read() << 8) | Wire.read();
+    accelRaw[ZAXIS] = (Wire.read() << 8) | Wire.read();
 
-  accelRaw[XAXIS] = (Wire.read() << 8) | Wire.read();
-  accelRaw[YAXIS] = (Wire.read() << 8) | Wire.read();
-  accelRaw[ZAXIS] = (Wire.read() << 8) | Wire.read();
+    temperature = (Wire.read() << 8) | Wire.read();
 
-  temperature = (Wire.read() << 8) | Wire.read();
-
-  gyroRaw[XAXIS] = (Wire.read() << 8) | Wire.read();
-  gyroRaw[YAXIS] = (Wire.read() << 8) | Wire.read();
-  gyroRaw[ZAXIS] = (Wire.read() << 8) | Wire.read();
+    gyroRaw[XAXIS] = (Wire.read() << 8) | Wire.read();
+    gyroRaw[YAXIS] = (Wire.read() << 8) | Wire.read();
+    gyroRaw[ZAXIS] = (Wire.read() << 8) | Wire.read();
+  }
+  else
+    initI2CMPU();
 }
 
 void printMPUValues(void)

@@ -20,6 +20,7 @@ void sendHeartbeat(void)
 {
   mavlink_msg_heartbeat_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg, systemType, autopilotType, systemMode, 0, systemStatus);
   uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+  Serial.print("apple");
   Serial.write(buf, len);
 }
 void sendInformation(void)
