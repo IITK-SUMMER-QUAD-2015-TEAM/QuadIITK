@@ -1,36 +1,21 @@
-/*This version of Receiver uses pins 10, 11, 12, 13 of Arduino which are pins PCINT4, PCINT5, PCINT6, PCINT 7 of the Arduino. We'll be using the interrupt registers to achieve our goal
-**of reading PPM*/
+#define ARMING_THRESHOLD_MAX  1800
+#define ARMING_THRESHOLD_MIN  1200
 
-/*The below code is just my implementation of PinChangeInterrupt. It can be used only for pins 10,11,12&13.*/
-#define RECIVER_PIN1_MASK  0x10
-#define RECIVER_PIN2_MASK  0x20
-#define RECIVER_PIN3_MASK  0x40
-#define RECIVER_PIN4_MASK  0x80
+#define NUM_CYCLES 25
 
-#define RECEIVERPIN1  10
-#define RECEIVERPIN2  11
-#define RECEIVERPIN3  12
-#define RECEIVERPIN4  13
-//yaw->10 throttle 11 pitch roll
+#define RECIEVER_SCALING_FACTOR 0.005
+
 #define YAW 3
 #define ROLL 0
 #define PITCH 1
 #define THROTTLE 2
 #define TOTAL_CHANNELS 4//total no. of channels,can be changed in future
 
-#define NUM_CYCLES 25
-
-#define RECIEVER_SCALING_FACTOR 0.005
-
 int8_t receiverOffset[TOTAL_CHANNELS]={0,0,0,0};
 
 void initReceiver(void);
 void printReceiverInput(void);
 
-uint8_t receiverPin(void)
-{
-   return PINB;
-}
 class Receiver
 {
   private:
@@ -90,17 +75,6 @@ uint16_t getThrottle(void)
   return receivers[THROTTLE].getDiff();
 }
 
-void initReceiver(void)
-{
-  DDRB &=(0x0F);//setting the pins as input.
-  PORTB &=(0x0F);//pulling down the pins.
-  
-  PCICR|=(1<<PCIE0);//to enable Pin Change Interrupt on pins PCINT0-7.
-  PCMSK0=0xF0;//to allow pinchange interrupt on pins PCINT4-7 i.e. digital pins 10-13
-  
-  sei();
-}
-
 void printReceiverInput(void)
 {
   Serial.print(receivers[ROLL].getDiff());Serial.print("\t");
@@ -109,21 +83,13 @@ void printReceiverInput(void)
   Serial.print(receivers[YAW].getDiff());Serial.print("\n");
 }
 
-ISR(PCINT0_vect)
+boolean isHigh(uint8_t channel)
 {
-  //Serial.print("apple");
-  static uint8_t previousValue;
-  uint8_t currentValue=receiverPin();
-  uint8_t changedPins=(previousValue^currentValue)&0xF0;
-  
-  if(changedPins&RECIVER_PIN1_MASK)
-    receivers[ROLL].setValues(micros(),currentValue&RECIVER_PIN1_MASK);
-  if(changedPins&RECIVER_PIN2_MASK)
-    receivers[PITCH].setValues(micros(),currentValue&RECIVER_PIN2_MASK);
-  if(changedPins&RECIVER_PIN3_MASK)
-    receivers[THROTTLE].setValues(micros(),currentValue&RECIVER_PIN3_MASK);
-  if(changedPins&RECIVER_PIN4_MASK)
-    receivers[YAW].setValues(micros(),currentValue&RECIVER_PIN4_MASK);
-    
-  previousValue=currentValue;
+  return ((receivers[channel].getDiff()-receiverOffset[channel])>ARMING_THRESHOLD_MAX);
 }
+
+boolean isLow(uint8_t channel)
+{
+  return ((receivers[channel].getDiff()-receiverOffset[channel])<ARMING_THRESHOLD_MIN);
+}
+

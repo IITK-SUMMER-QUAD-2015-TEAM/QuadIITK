@@ -24,17 +24,23 @@
 #define MANUAL 0
 #define AUTOMATIC 1
 
+#define ARMING_THRESHOLD_MIN 1200
+#define ARMING_THRESHOLD_MAX 1800
+
 PID rollPID(&gyroRate[XAXIS]);
 PID pitchPID(&gyroRate[YAXIS]);
 PID yawPID(&gyroRate[ZAXIS]);
 
 void flightErrorCalculator(void);
+void armedCheck(void);
 void processHeading(void);
+
 void setUpPIDs(void);
+void setIZero(void);
 
 float heading=0;
 
-float motorRollCommand,motorYawCommand,motorPitchCommand;
+float motorRollCommand=0,motorYawCommand=0,motorPitchCommand=0;
 
 extern float gyroHeading;
 
@@ -82,5 +88,28 @@ void processHeading(void)
     if (heading >= (setHeading + 180)) {
       relativeHeading -= 360;
     }*/
-  
+}
+
+void armedCheck(void)
+{
+  if(isLow(THROTTLE))
+  {
+    if(isArmed)
+    {
+      if(isHigh(YAW))
+        isArmed=false;
+    }
+    else
+    {
+      if(isLow(YAW))
+        isArmed=true;
+    }
+  }
+}
+
+void setIZero(void)
+{
+  rollPID.iTerm=0;
+  yawPID.iTerm=0;
+  pitchPID.iTerm=0;
 }
