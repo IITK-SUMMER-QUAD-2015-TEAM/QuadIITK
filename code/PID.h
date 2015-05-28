@@ -15,6 +15,7 @@ class PID
   bool inAuto = false;
   uint8_t sampleTime;//in milliseconds
   float *input;
+  float SetPoint;
   public:
   PID(float *inputVar);
   float iTerm;
@@ -24,6 +25,7 @@ class PID
   void setMode(int mode);
   void init(void);
   float compute(float setPoint);
+  float getSetPoint(void);
 };
 
 

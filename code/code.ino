@@ -10,9 +10,9 @@
 #include <SPI.h>
 #include <Wire.h>
 
-#if PLATFORM==MEGA
+#if (PLATFORM==MEGA)
   #include "ReceiverMega.h"
-#elif PLATFORM==DUE
+#elif (PLATFORM==DUE)
   #include "ReceiverDue.h"
 #else
   #error Please choose a valid platform!
@@ -41,7 +41,11 @@ extern void setIZero(void);
 extern void setUpPIDs(void);
 
 extern void sendHeartbeat(void);
+extern void receiveCommunication(void);
+extern void sendInformation(void);
 
+extern boolean calibrateGyro(void);
+extern void computeAccelBias(void);
 int16_t temperature;
 File myFile;
 boolean isArmed=false,isPrevArmed=false;
@@ -54,10 +58,14 @@ void setup()
   initReceiver();
   initMotors();
   Serial.begin(BAUD_RATE);
-  //if (!SD.begin(SD_CARD_PIN)) Serial.println("Initialization failed!!");
-  //else Serial.println("Initialization Complete");
+  if (!SD.begin(SD_CARD_PIN)) Serial.println("Initialization failed!!");
+  else Serial.println("Initialization Complete");
   setUpPIDs();
+  delay(1000);
   initI2CMPU();
+  delay(200);
+  while(!calibrateGyro());
+  computeAccelBias();
   int i;
   pinMode(53,OUTPUT);
   digitalWrite(53,LOW);
@@ -68,10 +76,11 @@ void loop()
   static unsigned long int previousTime=0;
   unsigned long int currentTime=micros();
   unsigned long int deltaTime=currentTime-previousTime;
-  measureIMUSensors();
-  
+  receiveCommunication();
   if (deltaTime>10000)
   {
+    measureIMUSensors();
+    //Serial.println(deltaTime);
     uint32_t curr=micros();
     previousTime=currentTime;
     armedCheck();
@@ -81,21 +90,26 @@ void loop()
       setIZero();  
     }
     if(isArmed){
-      
       digitalWrite(53,HIGH);
     }
     else
       digitalWrite(53,LOW);
     isPrevArmed=isArmed;
-    if(count100Hz==100)
+    //Task1Hz()
     {
-      count100Hz=0;
-      sendHeartbeat();
-      Serial.print("Hi");
+      if(count100Hz==100)
+      {
+        count100Hz=0;
+        sendHeartbeat();
+      }
+      else
+        ++count100Hz;
+      Task100Hz();
     }
-    else
-      ++count100Hz;
-    Task100Hz();
+    //Task10Hz()
+    {
+      sendInformation();
+    }
      //Serial.print("a:\t");Serial.println(isArmed);
      //Task50Hz()
      /*The operations which the 50Hz task loop performs are:
@@ -104,11 +118,11 @@ void loop()
      //Task10Hz2&3->Battery Monitor, telemetry,OSD etc.
      //Task1Hz->Mavlink.
      /**************DEBUG**************************************************************/
-     //myFile=SD.open("data.csv",FILE_WRITE);
-     //printMPUValues();
+     myFile=SD.open("data.csv",FILE_WRITE);
+     printMPUValues();
      //printReceiverInput();
-     //myFile.close();
-     Serial.print("t:\t");Serial.println(micros()-curr);
+     myFile.close();
+     //Serial.print("t:\t");Serial.println(micros()-curr);
   }
   
 }

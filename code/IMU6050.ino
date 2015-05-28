@@ -27,7 +27,7 @@
 
 #define CONFIG_REGISTER 0x1A //The register containing the DLPF bits.
 
-#define CONFIG_VALUE  1  //0->260Hz  1->184Hz  2->94Hz  3->44Hz  4->21Hz  5->260Hz  6->10Hz  7->5Hz
+#define CONFIG_VALUE  4  //0->260Hz  1->184Hz  2->94Hz  3->44Hz  4->21Hz  5->260Hz  6->10Hz  7->5Hz
 //It is should be noted that decreasing the bandwidth increases the delay.
 /*The dividing factors. They change with different modes of operation of the gyro and accelerometer*/
 #define ACCELO_DIVIDING_FACTOR 16384//2g->16384  4g->8192  8g->4096  16g->2048
@@ -88,8 +88,7 @@ void getMPUValues(void)
     gyroRaw[YAXIS] = (Wire.read() << 8) | Wire.read();
     gyroRaw[ZAXIS] = (Wire.read() << 8) | Wire.read();
   }
-  else
-    initI2CMPU();
+
 }
 
 void printMPUValues(void)

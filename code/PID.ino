@@ -42,6 +42,8 @@ float PID::compute(float setPoint)
   if(!inAuto) 
     return 0.0;
 
+  SetPoint=setPoint;
+
   float error = setPoint - *input;
   iTerm += (ki * error);
   
@@ -62,5 +64,10 @@ float PID::compute(float setPoint)
   lastInput = *input;
   
   return output;
+}
+
+float PID::getSetPoint(void)
+{
+  return SetPoint;
 }
 

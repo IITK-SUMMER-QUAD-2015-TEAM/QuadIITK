@@ -49,7 +49,7 @@ void evaluateAccelRate() //WARNING:AccelSampleCount!=0
   accelSampleCount = 0;
 }
 
-void computeaccelBias() {
+void computeAccelBias() {
   for (uint16_t samples = 0; samples < SAMPLE_COUNT; samples++) 
   {
     //readMPU6000Sensors();TODO:Wirte appropriate code.
