@@ -38,11 +38,13 @@ void processHeading(void);
 void setUpPIDs(void);
 void setIZero(void);
 
-float heading=0;
+//float heading=0;
 
 float motorRollCommand=0,motorYawCommand=0,motorPitchCommand=0;
 
 extern float gyroHeading;
+
+extern int systemStatus;
 
 void setUpPIDs(void)
 {
@@ -97,12 +99,20 @@ void armedCheck(void)
     if(isArmed)
     {
       if(isHigh(YAW))
+      {
         isArmed=false;
+        digitalWrite(LED_PIN,LOW);
+        systemStatus=MAV_STATE_STANDBY;
+      }
     }
     else
     {
       if(isLow(YAW))
+      {
         isArmed=true;
+        digitalWrite(LED_PIN,HIGH);
+        systemStatus=MAV_STATE_ACTIVE;
+      }
     }
   }
 }

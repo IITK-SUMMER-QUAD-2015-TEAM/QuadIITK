@@ -1,3 +1,13 @@
+//      MAV_STATE_UNINIT=0, /* Uninitialized system, state is unknown. | */
+//	MAV_STATE_BOOT=1, /* System is booting up. | */
+//	MAV_STATE_CALIBRATING=2, /* System is calibrating and not flight-ready. | */
+//	MAV_STATE_STANDBY=3, /* System is grounded and on standby. It can be launched any time. | */
+//	MAV_STATE_ACTIVE=4, /* System is active and might be already airborne. Motors are engaged. | */
+//	MAV_STATE_CRITICAL=5, /* System is in a non-normal flight mode. It can however still navigate. | */
+//	MAV_STATE_EMERGENCY=6, /* System is in a non-normal flight mode. It lost control over parts or over the whole airframe. It is in mayday and going down. | */
+//	MAV_STATE_POWEROFF=7, /* System just initialized its power-down sequence, will shut down now. | */
+//	MAV_STATE_ENUM_END=8, /*  | */
+
 #define MAV_COMPONENT_ID MAV_COMP_ID_IMU
 #define MAV_SYSTEM_ID 96
 
@@ -55,9 +65,8 @@ void sendHeartbeat(void)
 void sendInformation(void)
 {
   //TODO:pack stuff and ship data:
-  updateFlightTime();
   uint16_t len;
-  mavlink_msg_raw_imu_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg, micros(), accelRate[XAXIS], accelRate[YAXIS], accelRate[ZAXIS], gyroRate[XAXIS], gyroRate[YAXIS], gyroRate[ZAXIS], 0, 0, 0);
+  mavlink_msg_raw_imu_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg, micros(), accelRaw[XAXIS], accelRaw[YAXIS], accelRaw[ZAXIS], gyroRaw[XAXIS]-gyroZero[XAXIS], gyroRaw[YAXIS]-gyroZero[YAXIS], gyroRaw[ZAXIS]-gyroZero[ZAXIS], magnetRaw[XAXIS], magnetRaw[YAXIS], magnetRaw[ZAXIS]);
   len=mavlink_msg_to_send_buffer(buf, &msg);
   Serial.write(buf, len);
   
@@ -72,10 +81,10 @@ void sendInformation(void)
   mavlink_msg_sys_status_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg, controlSystemsPresent, controlSystemsPresent, controlSystemsPresent, 0, 0, 0, 0, numDroppedPackets, 0, 0, 0, 0, 0);
   len=mavlink_msg_to_send_buffer(buf, &msg);
   Serial.write(buf, len);
-  
+ 
+  mavlink_msg_attitude_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg, sysTimeMillis, Kalman_roll,Kalman_pitch, Kalman_yaw, 0, 0, 0);
   //static inline uint16_t mavlink_msg_local_position_ned_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,uint32_t time_boot_ms, float x, float y, float z, float vx, float vy, float vz)
   //uint16_t mavlink_msg_param_value_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,const char *param_id, float param_value, uint8_t param_type, uint16_t param_count, uint16_t param_index)
-  //mavlink_msg_attitude_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg, millisecondsSinceBoot, kinematicsAngle[XAXIS], kinematicsAngle[YAXIS], kinematicsAngle[ZAXIS], 0, 0, 0);
   //mavlink_msg_vfr_hud_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg, 0.0, 0.0, ((int)(trueNorthHeading / M_PI * 180.0) + 360) % 360, (receiverData[THROTTLE]-1000)/10, getBaroAltitude(), 0.0);
   //mavlink_msg_global_position_int_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg, millisecondsSinceBoot, currentPosition.latitude, currentPosition.longitude, getGpsAltitude() * 10, (getGpsAltitude() - baroGroundAltitude * 100) * 10 , 0, 0, 0, ((int)(trueNorthHeading / M_PI * 180.0) + 360) % 360);
   //mavlink_msg_raw_pressure_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg, millisecondsSinceBoot, readRawPressure(), 0,0, readRawTemperature());

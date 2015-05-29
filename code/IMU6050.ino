@@ -114,6 +114,6 @@ void printMPUValues(void)
 void measureIMUSensors(void)
 {
   getMPUValues();
-  measureGyroSum();
-  measureAccelSum();
+  measureGyro();
+  measureAccel();
 }

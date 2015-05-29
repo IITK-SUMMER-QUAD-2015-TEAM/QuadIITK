@@ -1,30 +1,30 @@
-#define SAMPLE_COUNT 400  //for accelerometer calibration. Should lie between 1 and 65535.
+#define SAMPLE_COUNT 200 //for accelerometer calibration. Should lie between 1 and 256.
 
 #define XAXIS 0
 #define YAXIS 1
 #define ZAXIS 2
 
-float accelOneG = 9.80665;
+//float accelOneG = 9.80665;
 
-#define STANDARD_GRAVITY 9.80665
+#define STANDARD_GRAVITY 16384
 
 #define ACCELO_RANGE 4*STANDARD_GRAVITY //Range is +- 2g
 const long ACCELO_SCALING_FACTOR =  16384;
 
 int accelSampleCount=0;
 
-long accelSample[3] = {0,0,0};
+int32_t accelSample[3] = {0,0,0};
 float accelRate[3] = {0.0,0.0,0.0};
-float accelBias[3] = {0.0,0.0,0.0};
+float accelZero[3] = {0.0,0.0,0.0};
 
 extern int16_t accelRaw[3];
 
 void measureAccel() {
   //readMPU6000Accel();TODO:Wirte appropriate code.
 
-  accelRate[XAXIS] = accelRaw[XAXIS]/ ACCELO_SCALING_FACTOR + accelBias[XAXIS];
-  accelRate[YAXIS] = accelRaw[YAXIS]/ ACCELO_SCALING_FACTOR + accelBias[YAXIS];
-  accelRate[ZAXIS] = accelRaw[ZAXIS]/ ACCELO_SCALING_FACTOR + accelBias[ZAXIS];
+  accelRate[XAXIS] = (float)(accelRaw[XAXIS]-accelZero[XAXIS])/ ACCELO_SCALING_FACTOR;
+  accelRate[YAXIS] = (float)(accelRaw[YAXIS]-accelZero[YAXIS])/ ACCELO_SCALING_FACTOR;
+  accelRate[ZAXIS] = (float)(accelRaw[ZAXIS]-accelZero[ZAXIS])/ ACCELO_SCALING_FACTOR;
 }
 
 void measureAccelSum() {
@@ -36,7 +36,7 @@ void measureAccelSum() {
   accelSampleCount++;
 }
 
-void evaluateAccelRate() //WARNING:AccelSampleCount!=0
+/*void evaluateAccelRate() //WARNING:AccelSampleCount!=0
 {
   accelRate[XAXIS] = (float)(accelSample[XAXIS]/accelSampleCount)/ ACCELO_SCALING_FACTOR + accelBias[XAXIS];
   accelRate[YAXIS] = (float)(accelSample[YAXIS]/accelSampleCount)/ ACCELO_SCALING_FACTOR + accelBias[YAXIS];
@@ -47,26 +47,24 @@ void evaluateAccelRate() //WARNING:AccelSampleCount!=0
   accelSample[ZAXIS]=0;
   
   accelSampleCount = 0;
-}
+}*/
 
 void computeAccelBias() {
-  for (uint16_t samples = 0; samples < SAMPLE_COUNT; samples++) 
+  for (uint8_t samples = 0; samples < SAMPLE_COUNT; ++samples) 
   {
-    //readMPU6000Sensors();TODO:Wirte appropriate code.
+    getMPUValues();
     measureAccelSum();
-    delayMicroseconds(2500);
+    delay(5);
   }
 
-  accelRate[XAXIS] = accelSample[XAXIS]/accelSampleCount* ACCELO_SCALING_FACTOR;
-  accelRate[YAXIS] = accelSample[YAXIS]/accelSampleCount* ACCELO_SCALING_FACTOR;
-  accelRate[ZAXIS] = accelSample[ZAXIS]/accelSampleCount* ACCELO_SCALING_FACTOR;
+  accelZero[XAXIS] = (accelSample[XAXIS]/accelSampleCount);
+  accelZero[YAXIS] = (accelSample[YAXIS]/accelSampleCount);
+  accelZero[ZAXIS] = STANDARD_GRAVITY + (accelSample[ZAXIS]/accelSampleCount);
   
-  accelSampleCount = 0;
-
-  accelBias[XAXIS] = -accelRate[XAXIS];
-  accelBias[YAXIS] = -accelRate[YAXIS];
-  accelBias[ZAXIS] = -STANDARD_GRAVITY - accelRate[ZAXIS];
-
-  accelOneG = abs(accelRate[ZAXIS] + accelBias[ZAXIS]);
+  accelSample[XAXIS]=0;
+  accelSample[YAXIS]=0;
+  accelSample[ZAXIS]=0;
+  
+  accelSampleCount = 0;  
 }
 

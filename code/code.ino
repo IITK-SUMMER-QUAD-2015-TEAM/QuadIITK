@@ -1,5 +1,6 @@
 #define BAUD_RATE 115200 //general baud rates: 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, and 115200
 #define SD_CARD_PIN 53
+#define LED_PIN 52
 
 #define MEGA 0
 #define DUE  1
@@ -9,6 +10,7 @@
 #include <SD.h>
 #include <SPI.h>
 #include <Wire.h>
+#include <mavlink.h>
 
 #if (PLATFORM==MEGA)
   #include "ReceiverMega.h"
@@ -17,8 +19,10 @@
 #else
   #error Please choose a valid platform!
 #endif
-
+/*TODO: Have to check orientation of accelerometer before calibrating it.*/
 void Task100Hz(void);
+
+extern int systemStatus;
 
 extern void initI2CMPU(void);
 extern void getMPUValues(void);
@@ -27,6 +31,10 @@ extern void printMPUValues(void);
 extern void measureIMUSensors(void);
 extern void evaluateAccelRate(void);
 extern void evaluateGyroRate(void);
+
+extern void initMagnet(void);
+extern void getRawVal(void);
+extern void printMagnet(void);
 
 extern void initReceiver(void);
 extern void printReceiverInput(void);
@@ -58,17 +66,20 @@ void setup()
   initReceiver();
   initMotors();
   Serial.begin(BAUD_RATE);
-  if (!SD.begin(SD_CARD_PIN)) Serial.println("Initialization failed!!");
-  else Serial.println("Initialization Complete");
+  if (!SD.begin(SD_CARD_PIN)) 
+    Serial.println("Initialization failed!!");
+  else 
+    Serial.println("Initialization Complete");
   setUpPIDs();
-  delay(1000);
   initI2CMPU();
-  delay(200);
-  while(!calibrateGyro());
-  computeAccelBias();
-  int i;
-  pinMode(53,OUTPUT);
-  digitalWrite(53,LOW);
+  initMagnet();
+  
+  //while(!calibrateGyro())
+   // Serial.println("gyro");
+  //computeAccelBias();
+  pinMode(LED_PIN,OUTPUT);
+  digitalWrite(LED_PIN,LOW);
+  systemStatus=MAV_STATE_STANDBY;
 }
 
 void loop()
@@ -79,9 +90,14 @@ void loop()
   receiveCommunication();
   if (deltaTime>10000)
   {
-    measureIMUSensors();
-    //Serial.println(deltaTime);
     uint32_t curr=micros();
+    myFile=SD.open("dataKalman.txt",FILE_WRITE);
+    kalman();
+    myFile.close();
+    //measureIMUSensors();
+    //getMagnet();
+    //printMagnet();   
+    Serial.println(deltaTime);
     previousTime=currentTime;
     armedCheck();
     if(isPrevArmed&&!(isArmed))
@@ -89,14 +105,9 @@ void loop()
       setMotorsZero(); 
       setIZero();  
     }
-    if(isArmed){
-      digitalWrite(53,HIGH);
-    }
-    else
-      digitalWrite(53,LOW);
     isPrevArmed=isArmed;
     //Task1Hz()
-    {
+    /*{
       if(count100Hz==100)
       {
         count100Hz=0;
@@ -105,11 +116,12 @@ void loop()
       else
         ++count100Hz;
       Task100Hz();
-    }
+    }*//*
     //Task10Hz()
+    if((count100Hz%10)==0)
     {
       sendInformation();
-    }
+    }*/
      //Serial.print("a:\t");Serial.println(isArmed);
      //Task50Hz()
      /*The operations which the 50Hz task loop performs are:
@@ -118,10 +130,9 @@ void loop()
      //Task10Hz2&3->Battery Monitor, telemetry,OSD etc.
      //Task1Hz->Mavlink.
      /**************DEBUG**************************************************************/
-     myFile=SD.open("data.csv",FILE_WRITE);
-     printMPUValues();
+     
+     //printMPUValues();
      //printReceiverInput();
-     myFile.close();
      //Serial.print("t:\t");Serial.println(micros()-curr);
   }
   
@@ -129,8 +140,8 @@ void loop()
 
 void Task100Hz(void)
 {
-  evaluateGyroRate();
-  evaluateAccelRate();
+  //evaluateGyroRate();
+  //evaluateAccelRate();
   /*TODO: Maybe implement a fourth order filter.
   **TODO: Calculate Kinematics
   **TODO: Estimate Vz for altitude hold*/

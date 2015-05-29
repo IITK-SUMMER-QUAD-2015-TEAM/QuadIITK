@@ -72,9 +72,9 @@ boolean calibrateGyro() {
   int16_t diff = 0; 
   for (uint8_t axis = 0; axis < 3; ++axis) 
   {
-    for (uint8_t i=0; i<FINDZERO_NUM; i++) 
+    for (uint8_t i=0; i<FINDZERO_NUM; ++i) 
     {
-      //readMPU6000Sensors();TODO:edit this part.
+      getMPUValues();
       findZero[i]=gyroRaw[axis];
       delay(10);
     }
