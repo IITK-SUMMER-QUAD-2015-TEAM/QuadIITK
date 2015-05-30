@@ -1,14 +1,14 @@
 #define RAD2DEG 57.2957795131
 
-#define ROLL_KP  20
+#define ROLL_KP  35
 #define ROLL_KI 0 
 #define ROLL_KD  0
 
-#define PITCH_KP  20
+#define PITCH_KP  35
 #define PITCH_KI  0
 #define PITCH_KD  0
 
-#define YAW_KP  20
+#define YAW_KP  120
 #define YAW_KI  0
 #define YAW_KD  0
 
@@ -18,8 +18,8 @@
 #define PITCH_MIN  -300
 #define PITCH_MAX  300
 
-#define YAW_MIN  -300
-#define YAW_MAX  300
+#define YAW_MIN  -700
+#define YAW_MAX  700
 
 #define MANUAL 0
 #define AUTOMATIC 1

@@ -2,7 +2,7 @@
 #define GYRO_RANGE 2*250.0
 const float GYRO_SCALING_FACTOR = GYRO_RANGE*DEG_TO_RAD/65536.0;
 
-#define FINDZERO_NUM 49//for calibration. Range can be set from 1 to 255
+#define FINDZERO_NUM 250//for calibration. Range can be set from 1 to 255
 
 #define GYRO_CALIBRATION_TRESHOLD 25
 
@@ -20,7 +20,7 @@ uint8_t gyroSampleCount=0;
 
 extern int16_t gyroRaw[3];
 
-extern int16_t findMedianIntWithDiff(int *data, int arraySize, int * diff);
+extern int16_t findMedianIntWithDiff(int *data, int arraySize, int *diff);
 
 void gyroUpdateHeading()
 {
@@ -67,7 +67,6 @@ void evaluateGyroRate() //WARNING:GyroSampleCount!=0
 }
 
 boolean calibrateGyro() {
-  
   int16_t findZero[FINDZERO_NUM];
   int16_t diff = 0; 
   for (uint8_t axis = 0; axis < 3; ++axis) 
@@ -86,3 +85,5 @@ boolean calibrateGyro() {
   }
   return true;
 }
+
+

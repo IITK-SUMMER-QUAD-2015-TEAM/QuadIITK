@@ -5,7 +5,7 @@
 #define MEGA 0
 #define DUE  1
 
-#define PLATFORM DUE
+#define PLATFORM MEGA
 
 #include <SD.h>
 #include <SPI.h>
@@ -58,6 +58,8 @@ int16_t temperature;
 File myFile;
 boolean isArmed=false,isPrevArmed=false;
 
+extern void printSDMotors(void);
+
 uint8_t count100Hz=0;
 
 void setup()
@@ -66,17 +68,22 @@ void setup()
   initReceiver();
   initMotors();
   Serial.begin(BAUD_RATE);
-  if (!SD.begin(SD_CARD_PIN)) 
+  /*if (!SD.begin(SD_CARD_PIN)) 
     Serial.println("Initialization failed!!");
   else 
-    Serial.println("Initialization Complete");
+    Serial.println("Initialization Complete");*/
   setUpPIDs();
   initI2CMPU();
-  initMagnet();
+  //initMagnet();
   
-  //while(!calibrateGyro())
+  calibrateGyro();
    // Serial.println("gyro");
   //computeAccelBias();
+  
+  getCoefficients();//For the second order filter.
+  
+  initParameters();//For MAVLINK paramters
+  
   pinMode(LED_PIN,OUTPUT);
   digitalWrite(LED_PIN,LOW);
   systemStatus=MAV_STATE_STANDBY;
@@ -91,13 +98,13 @@ void loop()
   if (deltaTime>10000)
   {
     uint32_t curr=micros();
-    myFile=SD.open("dataKalman.txt",FILE_WRITE);
-    kalman();
-    myFile.close();
-    //measureIMUSensors();
+    //myFile=SD.open("dataRoll.txt",FILE_WRITE);
+    //kalman();
+    
+    measureIMUSensors();
     //getMagnet();
     //printMagnet();   
-    Serial.println(deltaTime);
+    //Serial.println(deltaTime);
     previousTime=currentTime;
     armedCheck();
     if(isPrevArmed&&!(isArmed))
@@ -106,6 +113,11 @@ void loop()
       setIZero();  
     }
     isPrevArmed=isArmed;
+    if(isArmed)
+      Task100Hz();
+    //printSDMotor();
+    //myFile.println(receivers[ROLL].getDiff());
+    //myFile.close();
     //Task1Hz()
     /*{
       if(count100Hz==100)
@@ -115,7 +127,7 @@ void loop()
       }
       else
         ++count100Hz;
-      Task100Hz();
+      
     }*//*
     //Task10Hz()
     if((count100Hz%10)==0)

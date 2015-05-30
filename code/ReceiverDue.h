@@ -2,7 +2,7 @@
 
 #define RECEIVER_PIN1  10  
 #define RECEIVER_PIN2  11  
-#define RECEIVER_PIN3  12  
+#define RECEIVER_PIN3  9  
 #define RECEIVER_PIN4  13
 
 void rise1(void);

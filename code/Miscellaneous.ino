@@ -1,4 +1,4 @@
-int16_t findMedianIntWithDiff(int16_t *data, uint16_t arraySize, int16_t * diff) 
+int16_t findMedianIntWithDiff(int16_t *data, int16_t arraySize, int16_t *diff) 
 {
   uint16_t temp;
   boolean flag = 0;

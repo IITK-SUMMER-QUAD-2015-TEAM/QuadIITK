@@ -3,7 +3,7 @@
 
 #define NUM_CYCLES 25
 
-#define RECIEVER_SCALING_FACTOR 0.005
+#define RECIEVER_SCALING_FACTOR 0.0025
 
 #define YAW 3
 #define ROLL 0

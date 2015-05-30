@@ -20,23 +20,46 @@ struct parameter
 {
   char* parameterID;
   float* parameterValue;
-  parameter(char* name, float* value):parameterID(name),parameterValue(value){} 
+  void setParameter(char* name, float* value); 
 };
 
+void parameter::setParameter(char* name, float* value)
+{
+  parameterID=name;
+  parameterValue=value;
+}
 #define PARAM_LIST_SIZE 0
-/*
-parameter parameters[PARAM_LIST_SIZE]=  {
-                                          
-                                       };*/
+
+parameter parameters[PARAM_LIST_SIZE];
+
+void initParameters(void)
+{
+  uint8_t count=0;
+  parameters[count++].setParameter("GxRaw",&gyroRate[XAXIS]);
+  parameters[count++].setParameter("GyRaw",&gyroRate[YAXIS]);
+  parameters[count++].setParameter("GzRaw",&gyroRate[ZAXIS]);
+  
+  parameters[count++].setParameter("AxRaw",&accelRate[XAXIS]);
+  parameters[count++].setParameter("AyRaw",&accelRate[YAXIS]);
+  parameters[count++].setParameter("AzRaw",&accelRate[ZAXIS]);
+}
 
 #define D3_GYRO (1<<0)
 #define D3_ACCEL (1<<1)
 #define D3_MAGNET (1<<2)
 #define D3_ANGULAR_RATE_CONTROL (1<<10)
+#define YAW_POSITION (1<<12)
+#define ALTITUDE_CONTROL (1<<13)
+#define ATTITUDE_STABILIZE (1<<11)
+
+#define GPS (1<<5)
+
+#define ABSOLUTE_PRESSURE (1<<3)
+#define DIFFERENTIAL_PRESSURE (1<<4)
 
 #define MOTORS (1<<15)
 
-const uint32_t controlSystemsPresent = D3_GYRO|D3_ACCEL|D3_ANGULAR_RATE_CONTROL|MOTORS;
+const uint32_t controlSystemsPresent = D3_GYRO|D3_ACCEL|D3_ANGULAR_RATE_CONTROL|MOTORS|D3_MAGNET;
 const int systemType = MAV_TYPE_QUADROTOR;
 const int autopilotType = MAV_AUTOPILOT_GENERIC;
 int systemMode = MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
@@ -83,6 +106,10 @@ void sendInformation(void)
   Serial.write(buf, len);
  
   mavlink_msg_attitude_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg, sysTimeMillis, Kalman_roll,Kalman_pitch, Kalman_yaw, 0, 0, 0);
+  len=mavlink_msg_to_send_buffer(buf, &msg);
+  Serial.write(buf, len);
+  
+  sendParameterList();
   //static inline uint16_t mavlink_msg_local_position_ned_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,uint32_t time_boot_ms, float x, float y, float z, float vx, float vy, float vz)
   //uint16_t mavlink_msg_param_value_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,const char *param_id, float param_value, uint8_t param_type, uint16_t param_count, uint16_t param_index)
   //mavlink_msg_vfr_hud_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg, 0.0, 0.0, ((int)(trueNorthHeading / M_PI * 180.0) + 360) % 360, (receiverData[THROTTLE]-1000)/10, getBaroAltitude(), 0.0);
@@ -135,7 +162,11 @@ void receiveCommunication(void)
         } break;
         case MAVLINK_MSG_ID_PARAM_REQUEST_READ:
         {
-          
+          mavlink_param_request_read_t read;
+          mavlink_msg_param_request_read_decode(&msg, &read);
+
+          sendParameter(parameters[read.param_index].parameterID,*(parameters[read.param_index].parameterValue),read.param_index);
+
         } break;
         case MAVLINK_MSG_ID_PARAM_SET:
         {
@@ -167,12 +198,15 @@ void updateFlightTime(void)
 
 void sendParameterList(void)
 {
-  /*Send parameters like P,I,D*/
+  for(uint8_t i=0;i<PARAM_LIST_SIZE;++i)
+  {
+    sendParameter(parameters[i].parameterID,*(parameters[i].parameterValue),i);
+  }
 }
 
 void sendParameter(char* parameterID,float parameterValue,uint8_t index)
 {
-  mavlink_msg_param_value_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg, (char*)parameterID,parameterValue,0, PARAM_LIST_SIZE, index);
+  mavlink_msg_param_value_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg, (char*)parameterID,parameterValue,MAV_VAR_FLOAT, PARAM_LIST_SIZE, index);
   uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
   Serial.write(buf, len);
 }
