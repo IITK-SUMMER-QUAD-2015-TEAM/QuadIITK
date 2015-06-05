@@ -1,6 +1,6 @@
-#define BAUD_RATE 115200 //general baud rates: 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, and 115200
+#define BAUD_RATE 57600//general baud rates: 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, and 115200
 #define SD_CARD_PIN 53
-#define LED_PIN 52
+#define LED_PIN 50
 
 #define MEGA 0
 #define DUE  1
@@ -27,6 +27,7 @@ extern int systemStatus;
 extern void initI2CMPU(void);
 extern void getMPUValues(void);
 extern void printMPUValues(void);
+extern void printSDIMU(void);
 
 extern void measureIMUSensors(void);
 extern void evaluateAccelRate(void);
@@ -52,7 +53,7 @@ extern void sendHeartbeat(void);
 extern void receiveCommunication(void);
 extern void sendInformation(void);
 
-extern boolean calibrateGyro(void);
+extern void calibrateGyro(void);
 extern void computeAccelBias(void);
 int16_t temperature;
 File myFile;
@@ -76,13 +77,13 @@ void setup()
   initI2CMPU();
   //initMagnet();
   
-  calibrateGyro();
+  //calibrateGyro();
    // Serial.println("gyro");
   //computeAccelBias();
   
-  getCoefficients();//For the second order filter.
+  //getCoefficients();//For the second order filter.
   
-  initParameters();//For MAVLINK paramters
+  //initParameters();//For MAVLINK paramters
   
   pinMode(LED_PIN,OUTPUT);
   digitalWrite(LED_PIN,LOW);
@@ -91,18 +92,18 @@ void setup()
 
 void loop()
 {
+  
   static unsigned long int previousTime=0;
   unsigned long int currentTime=micros();
   unsigned long int deltaTime=currentTime-previousTime;
-  receiveCommunication();
   if (deltaTime>10000)
   {
     uint32_t curr=micros();
-    //myFile=SD.open("dataRoll.txt",FILE_WRITE);
+    //myFile=SD.open("IMU.csv",FILE_WRITE);
     //kalman();
     
-    measureIMUSensors();
-    //getMagnet();
+   measureIMUSensors();
+   //getMagnet();
     //printMagnet();   
     //Serial.println(deltaTime);
     previousTime=currentTime;
@@ -116,10 +117,13 @@ void loop()
     if(isArmed)
       Task100Hz();
     //printSDMotor();
+    //myFile.pr--intln("Hello World");
+    //Serial.println("Hello");
+    //printSDIMU();
     //myFile.println(receivers[ROLL].getDiff());
     //myFile.close();
     //Task1Hz()
-    /*{
+    {
       if(count100Hz==100)
       {
         count100Hz=0;
@@ -128,12 +132,14 @@ void loop()
       else
         ++count100Hz;
       
-    }*//*
+    }
     //Task10Hz()
-    if((count100Hz%10)==0)
+    
+    if((count100Hz%5)==0)
     {
+      receiveCommunication();
       sendInformation();
-    }*/
+    } 
      //Serial.print("a:\t");Serial.println(isArmed);
      //Task50Hz()
      /*The operations which the 50Hz task loop performs are:
@@ -145,7 +151,8 @@ void loop()
      
      //printMPUValues();
      //printReceiverInput();
-     //Serial.print("t:\t");Serial.println(micros()-curr);
+    //Serial.print("t:\t");
+  //  Serial.println(micros()-curr);
   }
   
 }

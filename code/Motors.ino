@@ -1,7 +1,7 @@
 #include<Servo.h>
 //Write pins..
 #define MOTOR_FRONT_LEFT_PIN 7
-#define MOTOR_FRONT_RIGHT_PIN 6
+#define MOTOR_FRONT_RIGHT_PIN 2
 #define MOTOR_BACK_LEFT_PIN 5
 #define MOTOR_BACK_RIGHT_PIN  4
 
@@ -31,17 +31,17 @@ void writeMotorValues(void)
 {
  int throttle=getThrottle();
  
- frontLeftMotorCommand=throttle+motorRollCommand-motorPitchCommand-motorYawCommand;
- frontRightMotorCommand=throttle-motorRollCommand-motorPitchCommand+motorYawCommand;
- backLeftMotorCommand=throttle+motorRollCommand+motorPitchCommand+motorYawCommand;
- backRightMotorCommand=throttle-motorRollCommand+motorPitchCommand-motorYawCommand;
+ frontLeftMotorCommand=throttle-motorRollCommand-motorPitchCommand+motorYawCommand;
+ frontRightMotorCommand=throttle+motorRollCommand-motorPitchCommand-motorYawCommand;
+ backLeftMotorCommand=throttle-motorRollCommand+motorPitchCommand-motorYawCommand;
+ backRightMotorCommand=throttle+motorRollCommand+motorPitchCommand+motorYawCommand;
  
  
  frontLeft.writeMicroseconds(frontLeftMotorCommand);
  frontRight.writeMicroseconds(frontRightMotorCommand);
  backLeft.writeMicroseconds(backLeftMotorCommand);
  backRight.writeMicroseconds(backRightMotorCommand);
- //printMotorCommands();
+// printMotorCommands();
 }
 
 void setMotorsZero(void)

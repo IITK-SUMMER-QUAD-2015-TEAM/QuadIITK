@@ -179,7 +179,7 @@ void GetAnglesFromQuaternion(){
     Kalman_pitch = -asin(2*q1*q3-2*q0*q2)*180/3.14;
     Kalman_yaw   = -atan2(2*q1*q2+q0*q3,2*q0*q0+2*q1*q1-1)*180/3.14;
     
-  myFile.print(Kalman_roll);myFile.print('\t');myFile.print(Kalman_pitch);myFile.print('\t');myFile.print(Kalman_yaw);myFile.print('\n');//Serial.print('\n');
+  //myFile.print(Kalman_roll);myFile.print('\t');myFile.print(Kalman_pitch);myFile.print('\t');myFile.print(Kalman_yaw);myFile.print('\n');//Serial.print('\n');
 }
 
 void QuaternionProduct(float aa[][1], float bb[][1], float cc[][1])

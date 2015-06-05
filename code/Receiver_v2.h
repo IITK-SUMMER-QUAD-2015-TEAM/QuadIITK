@@ -3,7 +3,7 @@
 
 #define NUM_CYCLES 25
 
-#define RECIEVER_SCALING_FACTOR 0.0025
+#define RECIEVER_SCALING_FACTOR 0.005
 
 #define YAW 3
 #define ROLL 0
@@ -90,6 +90,6 @@ boolean isHigh(uint8_t channel)
 
 boolean isLow(uint8_t channel)
 {
-  return ((receivers[channel].getDiff()-receiverOffset[channel])<ARMING_THRESHOLD_MIN);
+  return (((receivers[channel].getDiff()-receiverOffset[channel])<ARMING_THRESHOLD_MIN)&&((receivers[channel].getDiff()-receiverOffset[channel])>1000));
 }
 
