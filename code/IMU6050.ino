@@ -88,27 +88,22 @@ void getMPUValues(void)
     gyroRaw[YAXIS] = (Wire.read() << 8) | Wire.read();
     gyroRaw[ZAXIS] = (Wire.read() << 8) | Wire.read();
   }
+  /*else
+    Serial.println("MPU is not working");*/
 
 }
 
 void printMPUValues(void)
 {
   Serial.print(gyroRate[XAXIS]); Serial.print('\t');
-  myFile.print(gyroRate[XAXIS]); myFile.print(",");
   Serial.print(gyroRate[YAXIS]);Serial.print('\t');
-  myFile.print(gyroRate[YAXIS]);Serial.print(",");
   Serial.print(gyroRate[ZAXIS]); Serial.print('\t');
-  myFile.print(gyroRate[ZAXIS]); Serial.print(",");
   
   Serial.print(accelRate[XAXIS]); Serial.print('\t');
-  myFile.print(accelRate[XAXIS]); myFile.print(",");
   Serial.print(accelRate[YAXIS]);Serial.print('\t');
-  myFile.print(accelRate[YAXIS]);myFile.print(",");
   Serial.print(accelRate[ZAXIS]); Serial.print('\t');
-  myFile.print(accelRate[ZAXIS]); myFile.print(",");
   
   Serial.println((float)temperature / TEMP_DIVIDING_FACTOR + TEMP_OFFSET);Serial.print('\n');
-  myFile.println((float)temperature / TEMP_DIVIDING_FACTOR + TEMP_OFFSET);
 }
 
 void measureIMUSensors(void)
@@ -116,4 +111,15 @@ void measureIMUSensors(void)
   getMPUValues();
   measureGyro();
   measureAccel();
+}
+
+void printSDIMU(void)
+{
+  myFile.print(gyroRate[XAXIS]); myFile.print(",");
+  myFile.print(gyroRate[YAXIS]);myFile.print(",");
+  myFile.print(gyroRate[ZAXIS]); myFile.print(",");
+  
+  myFile.print(accelRate[XAXIS]); myFile.print(",");
+  myFile.print(accelRate[YAXIS]);myFile.print(",");
+  myFile.println(accelRate[ZAXIS]);
 }
