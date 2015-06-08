@@ -7,12 +7,19 @@
 #define YAXIS 1
 #define ZAXIS 2
 
-#define M1
-#define M1
-#define M1
-#define M1
-#define M1
-#define M1
+#define M1// to be filled after calibration 
+#define M2
+#define M3
+#define M4
+#define M5
+#define M6
+#define M7
+#define M8
+#define M9
+#define B1
+#define B2
+#define B3
+
 #define MAGNET_SCALING_FACTOR 
 double heading; 
 int16_t magnetRaw[NUM_AXIS]={0,0,0};
@@ -44,6 +51,12 @@ void getMagnet(void)
    magnetRaw[YAXIS]=(Wire.read()<<8|Wire.read())*-1;
    magnetRaw[ZAXIS]=(Wire.read()<<8|Wire.read())*-1;
    
+}
+
+void calibrateMagnetometer(){
+     magnetVal[XAXIS]=M1*(magnetRaw[XAXIS]-B1)+M2*(magnetRaw[YAXIS]-B2)+M3*(magnetRaw[ZAXIS]-B3);
+     magnetVal[YAXIS]=M4*(magnetRaw[XAXIS]-B1)+M5*(magnetRaw[YAXIS]-B2)+M3*(magnetRaw[ZAXIS]-B3);
+     magnetVal[ZAXIS]=M7*(magnetRaw[XAXIS]-B1)+M8*(magnetRaw[YAXIS]-B2)+M9*(magnetRaw[ZAXIS]-B3);
 }
 
 void printMagnet(void)
