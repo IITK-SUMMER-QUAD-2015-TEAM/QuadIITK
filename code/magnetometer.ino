@@ -10,6 +10,9 @@
 #define M1
 #define M1
 #define M1
+#define M1
+#define M1
+#define M1
 #define MAGNET_SCALING_FACTOR 
 double heading; 
 int16_t magnetRaw[NUM_AXIS]={0,0,0};
