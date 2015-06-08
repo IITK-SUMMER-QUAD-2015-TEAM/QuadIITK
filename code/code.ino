@@ -104,6 +104,7 @@ void loop()
     
    measureIMUSensors();
    //getMagnet();
+    //calibrateMagnetometer();
     //printMagnet();   
     //Serial.println(deltaTime);
     previousTime=currentTime;
