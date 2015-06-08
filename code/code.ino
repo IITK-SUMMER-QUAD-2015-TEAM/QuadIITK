@@ -110,6 +110,7 @@ void loop()
    calculateKinematics();
 //printAngles();
    //getMagnet();
+    //calibrateMagnetometer();
     //printMagnet();   
     //Serial.println(deltaTime);
     previousTime=currentTime;
