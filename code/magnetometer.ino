@@ -67,7 +67,7 @@ void printMagnet(void)
 }
 
 void getHeading(){
-  heading=(float)atan2((float)magnetRaw[YAXIS],(float)magnetRaw[XAXIS])*180/PI;
+  heading=(float)atan2((float)magnetVal[YAXIS],(float)magnetVal[XAXIS])*180/PI;
  
   heading+=DEC_ANGLE;
   
