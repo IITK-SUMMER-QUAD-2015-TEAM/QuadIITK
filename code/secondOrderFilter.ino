@@ -13,13 +13,13 @@ int16_t Tmp;
 class filter
 {
   public:
-  static float coeff[5];
   float filterInput(float input);
   private:
   float output[3]={0,0,0};
   float input[3]={0,0,0};
 };
-float filter::coeff[5]; 
+
+static double coeff[5]; 
 
 float filter::filterInput(float Input)
 {
@@ -44,10 +44,10 @@ void getCoefficients(){
     double QcWarp = tan(QcRaw); 
     double gain = 1 / ( 1 + sqrt2 / QcWarp + 2 / ( QcWarp * QcWarp ) );
 
-    filter::coeff[4] = ( 1 - sqrt2 / QcWarp + 2 / ( QcWarp * QcWarp ) ) * gain;
-    filter::coeff[3] = ( 2 - 2 * 2 / ( QcWarp * QcWarp ) ) * gain;
+    coeff[4] = ( 1 - sqrt2 / QcWarp + 2 / ( QcWarp * QcWarp ) ) * gain;
+    coeff[3] = ( 2 - 2 * 2 / ( QcWarp * QcWarp ) ) * gain;
     
-    filter::coeff[0] = 1 * gain;
-    filter::coeff[1] = 2 * gain;
-    filter::coeff[2] = 1 * gain;
+    coeff[0] = 1 * gain;
+    coeff[1] = 2 * gain;
+    coeff[2] = 1 * gain;
  }
