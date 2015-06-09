@@ -7,6 +7,19 @@
 #define YAXIS 1
 #define ZAXIS 2
 
+#define M1// to be filled after calibration 
+#define M2
+#define M3
+#define M4
+#define M5
+#define M6
+#define M7
+#define M8
+#define M9
+#define B1
+#define B2
+#define B3
+
 #define MAGNET_SCALING_FACTOR 
 double heading; 
 int16_t magnetRaw[NUM_AXIS]={0,0,0};
@@ -40,6 +53,12 @@ void getMagnet(void)
    
 }
 
+void calibrateMagnetometer(){
+     magnetVal[XAXIS]=M1*(magnetRaw[XAXIS]-B1)+M2*(magnetRaw[YAXIS]-B2)+M3*(magnetRaw[ZAXIS]-B3);
+     magnetVal[YAXIS]=M4*(magnetRaw[XAXIS]-B1)+M5*(magnetRaw[YAXIS]-B2)+M3*(magnetRaw[ZAXIS]-B3);
+     magnetVal[ZAXIS]=M7*(magnetRaw[XAXIS]-B1)+M8*(magnetRaw[YAXIS]-B2)+M9*(magnetRaw[ZAXIS]-B3);
+}
+
 void printMagnet(void)
 {
   Serial.print(magnetRaw[XAXIS]);Serial.print('\t');
@@ -48,7 +67,7 @@ void printMagnet(void)
 }
 
 void getHeading(){
-  heading=(float)atan2((float)magnetRaw[YAXIS],(float)magnetRaw[XAXIS])*180/PI;
+  heading=(float)atan2((float)magnetVal[YAXIS],(float)magnetVal[XAXIS])*180/PI;
  
   heading+=DEC_ANGLE;
   

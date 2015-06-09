@@ -35,6 +35,7 @@ extern void evaluateGyroRate(void);
 
 extern void initMagnet(void);
 extern void getRawVal(void);
+extern void calibrateMagnetometer(void);
 extern void printMagnet(void);
 
 extern void initReceiver(void);
@@ -110,6 +111,7 @@ void loop()
    calculateKinematics();
 //printAngles();
    //getMagnet();
+    //calibrateMagnetometer();
     //printMagnet();   
     //Serial.println(deltaTime);
     previousTime=currentTime;
