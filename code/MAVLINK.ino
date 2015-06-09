@@ -16,38 +16,54 @@
 #include <mavlink.h>
 #include "PID.h"
 
-
-extern int16_t  frontLeftMotorCommand,frontRightMotorCommand,backLeftMotorCommand,backRightMotorCommand;
-extern float angleCorrected[3];
+extern float ROLL_KP,ROLL_KI,ROLL_KD,YAW_KP,YAW_KI,YAW_KD,PITCH_KP,PITCH_KI,PITCH_KD,ROLL_ANGLE_KP,ROLL_ANGLE_KI,ROLL_ANGLE_KD,PITCH_ANGLE_KP,PITCH_ANGLE_KI,PITCH_ANGLE_KD;
 
 extern float motorRollCommand,motorYawCommand,motorPitchCommand;
-/*struct parameter
+extern int16_t  frontLeftMotorCommand,frontRightMotorCommand,backLeftMotorCommand,backRightMotorCommand;
+
+extern float angleCorrected[3];
+
+struct parameter
 {
   char* parameterID;
   float* parameterValue;
-  void setParameter(char* name, float* value); 
+  uint16_t addressEEPROM;
+  void setParameter(char* name, float* value,uint16_t addressEEPROM); 
 };
 
-void parameter::setParameter(char* name, float* value)
+void parameter::setParameter(char* name, float* value,uint16_t address)
 {
   parameterID=name;
   parameterValue=value;
+  addressEEPROM=address;
 }
-#define PARAM_LIST_SIZE 6
+#define PARAM_LIST_SIZE 15
 
 parameter parameters[PARAM_LIST_SIZE];
 
 void initParameters(void)
 {
   uint8_t count=0;
-  parameters[count++].setParameter("GxRaw",&gyroRate[XAXIS]);
-  parameters[count++].setParameter("GyRaw",&gyroRate[YAXIS]);
-  parameters[count++].setParameter("GzRaw",&gyroRate[ZAXIS]);
+  parameters[count++].setParameter("ROLL_KP",&ROLL_KP,ROLL_KP_ADDRESS);
+  parameters[count++].setParameter("ROLL_KI",&ROLL_KI,ROLL_KI_ADDRESS);
+  parameters[count++].setParameter("ROLL_KD",&ROLL_KD,ROLL_KD_ADDRESS);
   
-  parameters[count++].setParameter("AxRaw",&accelRate[XAXIS]);
-  parameters[count++].setParameter("AyRaw",&accelRate[YAXIS]);
-  parameters[count++].setParameter("AzRaw",&accelRate[ZAXIS]);
-}*/
+  parameters[count++].setParameter("YAW_KP",&YAW_KP,YAW_KP_ADDRESS);
+  parameters[count++].setParameter("YAW_KI",&YAW_KI,YAW_KI_ADDRESS);
+  parameters[count++].setParameter("YAW_KD",&YAW_KD,YAW_KD_ADDRESS);
+    
+  parameters[count++].setParameter("PITCH_KP",&PITCH_KP,PITCH_KP_ADDRESS);
+  parameters[count++].setParameter("PITCH_KI",&PITCH_KI,PITCH_KI_ADDRESS);
+  parameters[count++].setParameter("PITCH_KD",&PITCH_KD,PITCH_KD_ADDRESS);
+    
+  parameters[count++].setParameter("ROLL_ANGLE_KP",&ROLL_ANGLE_KP,ROLL_ANGLE_KP_ADDRESS);
+  parameters[count++].setParameter("ROLL_ANGLE_KI",&ROLL_ANGLE_KI,ROLL_ANGLE_KI_ADDRESS);
+  parameters[count++].setParameter("ROLL_ANGLE_KD",&ROLL_ANGLE_KD,ROLL_ANGLE_KD_ADDRESS);
+  
+  parameters[count++].setParameter("PITCH_ANGLE_KP",&PITCH_ANGLE_KP,PITCH_ANGLE_KP_ADDRESS);
+  parameters[count++].setParameter("PITCH_ANGLE_KI",&PITCH_ANGLE_KI,PITCH_ANGLE_KI_ADDRESS);
+  parameters[count++].setParameter("PITCH_ANGLE_KD",&PITCH_ANGLE_KD,PITCH_ANGLE_KD_ADDRESS);
+ }
 
 #define D3_GYRO (1<<0)
 #define D3_ACCEL (1<<1)
@@ -71,8 +87,9 @@ int systemMode = MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
 int systemStatus = MAV_STATE_UNINIT;
 
 //int parameterType=MAVLINK_TYPE_FLOAT;
+mavlink_param_set_t set;
 
-//mavlink_param_set_t set;
+char* key;
 
 mavlink_message_t msg;
 
@@ -82,13 +99,15 @@ mavlink_status_t status;
 uint16_t  sysTimeMillis=0;
 uint32_t numDroppedPackets=0;
 
-extern PID rollPID,yawPID,pitchPID;
-
 void sendHeartbeat(void)
 {
   mavlink_msg_heartbeat_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg, systemType, autopilotType, systemMode, 0, systemStatus);
   uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
   Serial.write(buf, len);
+  static unsigned int count=0;
+  if(count%5==0)
+    sendParameterList();
+  ++count;
 }
 void sendInformation(void)
 {
@@ -119,11 +138,11 @@ void sendInformation(void)
   len=mavlink_msg_to_send_buffer(buf, &msg);
   Serial.write(buf, len);*/
   
-  mavlink_msg_debug_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg,sysTimeMillis,1,frontLeftMotorCommand);
+  mavlink_msg_debug_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg,sysTimeMillis,1,ROLL_KD);
   len=mavlink_msg_to_send_buffer(buf, &msg);
   Serial.write(buf, len);
   
-  mavlink_msg_debug_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg,sysTimeMillis,2,frontRightMotorCommand);
+  /*mavlink_msg_debug_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg,sysTimeMillis,2,frontRightMotorCommand);
   len=mavlink_msg_to_send_buffer(buf, &msg);
   Serial.write(buf, len);
   
@@ -149,15 +168,17 @@ void sendInformation(void)
   
   mavlink_msg_debug_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg,sysTimeMillis,8,(float)motorPitchCommand);
   len=mavlink_msg_to_send_buffer(buf, &msg);
+  Serial.write(buf, len);*/
+  
+  mavlink_msg_sys_status_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg, controlSystemsPresent, controlSystemsPresent, controlSystemsPresent, 0, 0, 0, 0, numDroppedPackets, 0, 0, 0, 0, 0);
+  len=mavlink_msg_to_send_buffer(buf, &msg);
   Serial.write(buf, len);
   
-  //sendParameterList();
   //static inline uint16_t mavlink_msg_local_position_ned_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,uint32_t time_boot_ms, float x, float y, float z, float vx, float vy, float vz)
   //uint16_t mavlink_msg_param_value_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,const char *param_id, float param_value, uint8_t param_type, uint16_t param_count, uint16_t param_index)
   //mavlink_msg_vfr_hud_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg, 0.0, 0.0, ((int)(trueNorthHeading / M_PI * 180.0) + 360) % 360, (receiverData[THROTTLE]-1000)/10, getBaroAltitude(), 0.0);
   //mavlink_msg_global_position_int_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg, millisecondsSinceBoot, currentPosition.latitude, currentPosition.longitude, getGpsAltitude() * 10, (getGpsAltitude() - baroGroundAltitude * 100) * 10 , 0, 0, 0, ((int)(trueNorthHeading / M_PI * 180.0) + 360) % 360);
   //mavlink_msg_raw_pressure_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg, millisecondsSinceBoot, readRawPressure(), 0,0, readRawTemperature());
-  //mavlink_msg_sys_status_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg, controlSensorsPresent, controlSensorEnabled, controlSensorsHealthy, 0, 0, 0, 0, system_dropped_packets, 0, 0, 0, 0, 0); 
 }
 void receiveCommunication(void)
 {
@@ -198,7 +219,7 @@ void receiveCommunication(void)
            uint16_t len= mavlink_msg_to_send_buffer(buf, &msg);
            Serial.write(buf,len);
         }break;
-        /*case MAVLINK_MSG_ID_PARAM_REQUEST_LIST:
+        case MAVLINK_MSG_ID_PARAM_REQUEST_LIST:
         {
           sendParameterList();
         } break;
@@ -209,16 +230,24 @@ void receiveCommunication(void)
 
           sendParameter(parameters[read.param_index].parameterID,*(parameters[read.param_index].parameterValue),read.param_index);
 
-        } break;*/
+        } break;
         case MAVLINK_MSG_ID_PARAM_SET:
         {
-          /*
+          
           if(!isArmed) { 
             mavlink_msg_param_set_decode(&msg, &set);
             key = (char*) set.param_id;
-            parameterMatch = findParameter(key);
-            parameterChangeIndicator = 0;
-          }*/
+            int parameterToBeChangedID = findParameter(key);
+            if(parameterToBeChangedID!=-1)
+            {
+              if(!isnan(set.param_value)&&!isinf(set.param_value))
+              {
+                *(parameters[parameterToBeChangedID].parameterValue)=set.param_value;
+                writeEEPROM(parameters[parameterToBeChangedID].addressEEPROM,(float)set.param_value);
+                sendParameter(parameters[parameterToBeChangedID].parameterID, *(parameters[parameterToBeChangedID].parameterValue),parameterToBeChangedID);
+              }
+            }
+          }
         } break;
         default:
           break;
@@ -237,18 +266,36 @@ void updateFlightTime(void)
   if (isArmed) 
     sysTimeMillis += timeDiff;
 }
-/*
+
 void sendParameterList(void)
 {
   for(uint8_t i=0;i<PARAM_LIST_SIZE;++i)
   {
     sendParameter(parameters[i].parameterID,*(parameters[i].parameterValue),i);
   }
-}*/
+}
 
-/*void sendParameter(char* parameterID,float parameterValue,uint8_t index)
+void sendParameter(char* parameterID,float parameterValue,uint8_t index)
 {
   mavlink_msg_param_value_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg, (char*)parameterID,parameterValue,0, PARAM_LIST_SIZE, index);
   uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
   Serial.write(buf, len);
-}*/
+}
+
+int findParameter(char* key) {
+  for(uint8_t i=0;i<PARAM_LIST_SIZE;++i)
+  {
+    if(checkParameterMatch(parameters[i].parameterID,key))
+      return i;
+  }
+  return -1;
+}
+
+bool checkParameterMatch(const char* parameterName, char* key) {
+  for (uint16_t j = 0; parameterName[j] != '\0'; j++) {
+    if (((char) (parameterName[j])) != (char) (key[j]))	{
+      return false;
+    }
+  }
+  return true;
+}

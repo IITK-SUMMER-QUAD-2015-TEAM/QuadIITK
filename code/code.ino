@@ -5,7 +5,7 @@
 #define MEGA 0
 #define DUE  1
 
-#define PLATFORM MEGA
+#define PLATFORM DUE
 
 #include <SD.h>
 #include <SPI.h>
@@ -71,13 +71,11 @@ void setup()
   
   initReceiver();
   initMotors();
+  
   Serial.begin(BAUD_RATE);
-  /*if (!SD.begin(SD_CARD_PIN)) 
-    Serial.println("Initialization failed!");
-  else 
-    Serial.println("Initialization Complete");*/
-  setUpPIDs();
+    
   initI2CMPU();
+  
   //initMagnet();
   
   //calibrateGyro();
@@ -86,7 +84,10 @@ void setup()
   
   //getCoefficients();//For the second order filter.
   calculateAngleOffset();
-  //initParameters();//For MAVLINK paramters
+  initParameters();//For MAVLINK paramters
+  initEEPROM();
+  setUpPIDs();
+  
   
   pinMode(LED_PIN,OUTPUT);
   digitalWrite(LED_PIN,LOW);
@@ -128,7 +129,7 @@ void loop()
     //myFile.println(receivers[ROLL].getDiff());
     //myFile.close();
     //Task1Hz()
-   /** {
+    {
       if(count100Hz==100)
       {
         count100Hz=0;
@@ -144,7 +145,7 @@ void loop()
     {
       receiveCommunication();
       sendInformation();
-    } **/
+    }
      //Serial.print("a:\t");Serial.println(isArmed);
      //Task50Hz()
      /*The operations which the 50Hz task loop performs are:

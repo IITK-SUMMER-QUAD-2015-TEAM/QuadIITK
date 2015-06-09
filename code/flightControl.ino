@@ -1,24 +1,24 @@
 #define RAD2DEG 57.2957795131
 
-#define ROLL_KP  65
-#define ROLL_KI 0 
-#define ROLL_KD  0.8
+float ROLL_KP = 65;
+float ROLL_KI =0 ;
+float ROLL_KD  =0.8;
 
-#define PITCH_KP  65
-#define PITCH_KI  0
-#define PITCH_KD  0.8
+float PITCH_KP  =65;
+float PITCH_KI  =0;
+float PITCH_KD  =0.8;
 
-#define YAW_KP  120
-#define YAW_KI  0
-#define YAW_KD  0
+float YAW_KP = 120;
+float YAW_KI = 0;
+float YAW_KD = 0;
 
-#define ROLL_ANGLE_KP  0.1
-#define ROLL_ANGLE_KI  0
-#define ROLL_ANGLE_KD  0
+float ROLL_ANGLE_KP = 0.1;
+float ROLL_ANGLE_KI = 0;
+float ROLL_ANGLE_KD = 0;
 
-#define PITCH_ANGLE_KP  0.1
-#define PITCH_ANGLE_KI  0
-#define PITCH_ANGLE_KD  0
+float PITCH_ANGLE_KP = 0.1;
+float PITCH_ANGLE_KI  =0;
+float PITCH_ANGLE_KD  =0;
 
 #define ROLL_MIN -300
 #define ROLL_MAX  300
