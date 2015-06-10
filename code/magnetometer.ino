@@ -7,15 +7,15 @@
 #define YAXIS 1
 #define ZAXIS 2
 
-#define M1 0.988692
-#define M2 -0.005989
-#define M3 -0.014164
-#define M4 -0.005989
-#define M5 1.048870
-#define M6 -0.023919
-#define M7 -0.014164
-#define M8 -0.023919
-#define M9 0.988458
+#define M1 1.125715
+#define M2 -0.006818
+#define M3 -0.016127
+#define M4 -0.006818
+#define M5 1.194233
+#define M6 -0.027234
+#define M7 -0.016127
+#define M8 -0.027234
+#define M9 1.125448
 #define B1 37.589576
 #define B2 4.844294
 #define B3 132.379174
