@@ -20,6 +20,11 @@
   #error Please choose a valid platform!
 #endif
 /*TODO: Have to check orientation of accelerometer before calibrating it.*/
+
+#define XAXIS 0
+#define YAXIS 1
+#define ZAXIS 2
+
 void Task100Hz(void);
 
 extern int systemStatus;
@@ -56,8 +61,10 @@ extern void sendInformation(void);
 
 extern void calibrateGyro(void);
 extern void computeAccelBias(void);
+
 int16_t temperature;
 File myFile;
+
 boolean isArmed=false,isPrevArmed=false;
 
 extern void printSDMotors(void);
@@ -65,7 +72,11 @@ extern void printSDMotors(void);
 extern void calculateAngleOffset(void);
 extern void calculateKinematics(void);
 
+extern void fourthOrderFilter(void);
+
 uint8_t count100Hz=0;
+
+extern struct fourthOrderFilter fourthOrder[3];
 
 void setup()
 {
@@ -108,6 +119,7 @@ void loop()
     //kalman();
     
    measureIMUSensors();
+   fourthOrderFilter();
    calculateKinematics();
 //printAngles();
    //getMagnet();

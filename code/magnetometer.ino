@@ -1,4 +1,4 @@
-#define HMC5883_ADDRESS 0x1E
+/*#define HMC5883_ADDRESS 0x1E
 #define MODE_ADDRESS 0x02
 
 #define DEC_ANGLE 0.5 //in degrees
@@ -53,7 +53,8 @@ void getMagnet(void)
    
 }
 
-void calibrateMagnetometer(){
+void calibrateMagnetometer(
+){
      magnetVal[XAXIS]=M1*(magnetRaw[XAXIS]-B1)+M2*(magnetRaw[YAXIS]-B2)+M3*(magnetRaw[ZAXIS]-B3);
      magnetVal[YAXIS]=M4*(magnetRaw[XAXIS]-B1)+M5*(magnetRaw[YAXIS]-B2)+M3*(magnetRaw[ZAXIS]-B3);
      magnetVal[ZAXIS]=M7*(magnetRaw[XAXIS]-B1)+M8*(magnetRaw[YAXIS]-B2)+M9*(magnetRaw[ZAXIS]-B3);
@@ -75,4 +76,4 @@ void getHeading(){
    heading+=2*PI;
   else if(heading>PI)
    heading-=2*PI;
-}
+}*/

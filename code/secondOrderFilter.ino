@@ -1,6 +1,3 @@
-#include<SPI.h>
-#include<Wire.h>
-
 #define CUTOFF 21// The cutoff frequency
 #define SAMPLE_RATE 100
 

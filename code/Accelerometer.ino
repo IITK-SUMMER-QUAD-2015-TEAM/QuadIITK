@@ -1,9 +1,5 @@
 #define SAMPLE_COUNT 200 //for accelerometer calibration. Should lie between 1 and 256.
 
-#define XAXIS 0
-#define YAXIS 1
-#define ZAXIS 2
-
 //float accelOneG = 9.80665;
 
 #define STANDARD_GRAVITY 16384

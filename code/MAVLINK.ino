@@ -138,10 +138,6 @@ void sendInformation(void)
   len=mavlink_msg_to_send_buffer(buf, &msg);
   Serial.write(buf, len);*/
   
-  mavlink_msg_debug_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg,sysTimeMillis,1,ROLL_KD);
-  len=mavlink_msg_to_send_buffer(buf, &msg);
-  Serial.write(buf, len);
-  
   /*mavlink_msg_debug_pack(MAV_SYSTEM_ID, MAV_COMPONENT_ID, &msg,sysTimeMillis,2,frontRightMotorCommand);
   len=mavlink_msg_to_send_buffer(buf, &msg);
   Serial.write(buf, len);
