@@ -7,18 +7,18 @@
 #define YAXIS 1
 #define ZAXIS 2
 
-#define M1// to be filled after calibration 
-#define M2
-#define M3
-#define M4
-#define M5
-#define M6
-#define M7
-#define M8
-#define M9
-#define B1
-#define B2
-#define B3
+#define M1 1.125715
+#define M2 -0.006818
+#define M3 -0.016127
+#define M4 -0.006818
+#define M5 1.194233
+#define M6 -0.027234
+#define M7 -0.016127
+#define M8 -0.027234
+#define M9 1.125448
+#define B1 37.589576
+#define B2 4.844294
+#define B3 132.379174
 
 #define MAGNET_SCALING_FACTOR 
 double heading; 
