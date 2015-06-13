@@ -4,16 +4,14 @@ float a=0.5, b=0.5, c=0.5, d=0.5;
 float n_k[4][1], q[4][1], q_predicted[4][1], q_Update[4][1]={{0.5},{0.5},{0.5},{0.5}}, p_predicted[4][4], p_Update[4][4], q_Osserv[4][1]={{0.5},{0.5},{0.5},{0.5}};
 float dt;
 
-
 extern int16_t magnetRaw[3];
 extern float accelRate[3];
 
 int ab=0;
 
-
 void kalman(){
     measureIMUSensors();
-    getMagnet();
+    //getMagnet();
     normalizeMagAcc(magnetRaw[XAXIS],magnetRaw[YAXIS],magnetRaw[ZAXIS],accelRate[XAXIS],accelRate[YAXIS],accelRate[ZAXIS]);//normalize magnetometer and Acc values
     GaussNewtonMethod();        //computing qOsserv
     kalman_filtering();
@@ -179,7 +177,7 @@ void GetAnglesFromQuaternion(){
     Kalman_pitch = -asin(2*q1*q3-2*q0*q2)*180/3.14;
     Kalman_yaw   = -atan2(2*q1*q2+q0*q3,2*q0*q0+2*q1*q1-1)*180/3.14;
     
-  myFile.print(Kalman_roll);myFile.print('\t');myFile.print(Kalman_pitch);myFile.print('\t');myFile.print(Kalman_yaw);myFile.print('\n');//Serial.print('\n');
+  //myFile.print(Kalman_roll);myFile.print('\t');myFile.print(Kalman_pitch);myFile.print('\t');myFile.print(Kalman_yaw);myFile.print('\n');//Serial.print('\n');
 }
 
 void QuaternionProduct(float aa[][1], float bb[][1], float cc[][1])

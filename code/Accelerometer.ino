@@ -1,4 +1,4 @@
-#define SAMPLE_COUNT 200 //for accelerometer calibration. Should lie between 1 and 256.
+#define SAMPLE_COUNT 250 //for accelerometer calibration. Should lie between 1 and 256.
 
 #define XAXIS 0
 #define YAXIS 1
@@ -6,7 +6,7 @@
 
 //float accelOneG = 9.80665;
 
-#define STANDARD_GRAVITY 16384
+#define STANDARD_GRAVITY -16384
 
 #define ACCELO_RANGE 4*STANDARD_GRAVITY //Range is +- 2g
 const long ACCELO_SCALING_FACTOR =  16384;
@@ -24,7 +24,7 @@ void measureAccel() {
 
   accelRate[XAXIS] = (float)(accelRaw[XAXIS]-accelZero[XAXIS])/ ACCELO_SCALING_FACTOR;
   accelRate[YAXIS] = (float)(accelRaw[YAXIS]-accelZero[YAXIS])/ ACCELO_SCALING_FACTOR;
-  accelRate[ZAXIS] = (float)(accelRaw[ZAXIS]-accelZero[ZAXIS])/ ACCELO_SCALING_FACTOR;
+  accelRate[ZAXIS] = (float)(accelZero[ZAXIS]-accelRaw[ZAXIS])/ ACCELO_SCALING_FACTOR;
 }
 
 void measureAccelSum() {
@@ -54,7 +54,7 @@ void computeAccelBias() {
   {
     getMPUValues();
     measureAccelSum();
-    delay(5);
+    delay(10);
   }
 
   accelZero[XAXIS] = (accelSample[XAXIS]/accelSampleCount);

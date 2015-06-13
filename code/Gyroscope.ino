@@ -1,10 +1,6 @@
-#define DEG_TO_RAD  0.017453292519943295769236907684886
-#define GYRO_RANGE 2*250.0
-const float GYRO_SCALING_FACTOR = GYRO_RANGE*DEG_TO_RAD/65536.0;
+#define GYRO_SCALING_FACTOR 0.0001332273112807464f
 
-#define FINDZERO_NUM 250//for calibration. Range can be set from 1 to 255
-
-#define GYRO_CALIBRATION_TRESHOLD 25
+#define FINDZERO_NUM 1000//for calibration. Range can be set from 1 to 255
 
 #define XAXIS 0
 #define YAXIS 1
@@ -35,9 +31,9 @@ void gyroUpdateHeading()
 void measureGyro() {
   //readMPU6000Gyro(); //TODO: write code for readMPU6000Gyro
   int gyroADC[3];
-  gyroRate[XAXIS] = (gyroRaw[XAXIS]  - gyroZero[XAXIS])*GYRO_SCALING_FACTOR;
-  gyroRate[YAXIS] = (gyroRaw[YAXIS]  - gyroZero[YAXIS])*GYRO_SCALING_FACTOR;
-  gyroRate[ZAXIS] = (gyroRaw[ZAXIS]  - gyroZero[ZAXIS])*GYRO_SCALING_FACTOR;
+  gyroRate[XAXIS] = ((gyroRaw[XAXIS]  - gyroZero[XAXIS])/131)*(3.1415/180);
+  gyroRate[YAXIS] = ((gyroRaw[YAXIS]  - gyroZero[YAXIS])/131)*(3.1415/180);
+  gyroRate[ZAXIS] = ((gyroRaw[ZAXIS]  - gyroZero[ZAXIS])/131)*(3.1415/180);
 
   gyroUpdateHeading();
 }
@@ -66,24 +62,19 @@ void evaluateGyroRate() //WARNING:GyroSampleCount!=0
   gyroUpdateHeading();
 }
 
-boolean calibrateGyro() {
-  int16_t findZero[FINDZERO_NUM];
-  int16_t diff = 0; 
-  for (uint8_t axis = 0; axis < 3; ++axis) 
+void calibrateGyro() {
+  int32_t gyroSum[3]={0,0,0};
+  for (uint16_t i=0; i<FINDZERO_NUM; ++i) 
   {
-    for (uint8_t i=0; i<FINDZERO_NUM; ++i) 
-    {
       getMPUValues();
-      findZero[i]=gyroRaw[axis];
+      gyroSum[XAXIS]+=gyroRaw[XAXIS];
+      gyroSum[YAXIS]+=gyroRaw[YAXIS];
+      gyroSum[ZAXIS]+=gyroRaw[ZAXIS];
       delay(10);
-    }
-    int16_t tmp = findMedianIntWithDiff(findZero, FINDZERO_NUM, &diff);
-    if (diff <= GYRO_CALIBRATION_TRESHOLD) 
-      gyroZero[axis] = tmp; 
-    else
-      return false; //Calibration failed.
   }
-  return true;
+  gyroZero[XAXIS]=gyroSum[XAXIS]/FINDZERO_NUM;
+  gyroZero[YAXIS]=gyroSum[YAXIS]/FINDZERO_NUM;
+  gyroZero[ZAXIS]=gyroSum[ZAXIS]/FINDZERO_NUM;
 }
 
 

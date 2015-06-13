@@ -26,6 +26,7 @@ class PID
   void init(void);
   float compute(float setPoint);
   float getSetPoint(void);
+  void resetLastInput(void);
 };
 
 

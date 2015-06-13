@@ -3,7 +3,7 @@
 
 #define NUM_CYCLES 25
 
-#define RECIEVER_SCALING_FACTOR 0.0025
+#define RECIEVER_SCALING_FACTOR 0.07f
 
 #define YAW 3
 #define ROLL 0
@@ -20,11 +20,11 @@ class Receiver
 {
   private:
   volatile unsigned long upTime;
-  volatile unsigned long diff;
+  volatile long diff;
   public:
   Receiver(void);
   void setValues(unsigned long presentTime, uint8_t condition);
-  unsigned long getDiff(void);
+  long getDiff(void);
   
 };
 
@@ -32,7 +32,7 @@ Receiver::Receiver()
 {
 }
 
-unsigned long Receiver::getDiff(void)
+long Receiver::getDiff(void)
 {
   return diff;
 }
@@ -66,11 +66,11 @@ void setOffset()
 
 float setChannelOutput(uint8_t channel)
 {
-    int temp=receivers[channel].getDiff()-receiverOffset[channel];
-    return (float)((temp-1500)*RECIEVER_SCALING_FACTOR);
+    float temp=receivers[channel].getDiff()-receiverOffset[channel];
+    return ((temp-1500)*RECIEVER_SCALING_FACTOR);
 }
 
-uint16_t getThrottle(void)
+int16_t getThrottle(void)
 {
   return receivers[THROTTLE].getDiff();
 }
@@ -90,6 +90,6 @@ boolean isHigh(uint8_t channel)
 
 boolean isLow(uint8_t channel)
 {
-  return ((receivers[channel].getDiff()-receiverOffset[channel])<ARMING_THRESHOLD_MIN);
+  return (((receivers[channel].getDiff()-receiverOffset[channel])<ARMING_THRESHOLD_MIN)&&((receivers[channel].getDiff()-receiverOffset[channel])>1000));
 }
 

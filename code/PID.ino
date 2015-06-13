@@ -71,3 +71,7 @@ float PID::getSetPoint(void)
   return SetPoint;
 }
 
+void PID::resetLastInput(void)
+{
+  lastInput=*input;
+}

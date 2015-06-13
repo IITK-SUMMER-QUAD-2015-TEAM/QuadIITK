@@ -7,6 +7,19 @@
 #define YAXIS 1
 #define ZAXIS 2
 
+#define M1 1.096547
+#define M2 -0.017542
+#define M3 -0.005483
+#define M4 -0.0175421
+#define M5 1.084696
+#define M6 -0.030403
+#define M7 -0.005483
+#define M8 -0.030403
+#define M9 1.155178
+#define B1 34.082902
+#define B2 123.023306
+#define B3 2.159130
+
 #define MAGNET_SCALING_FACTOR 
 double heading; 
 int16_t magnetRaw[NUM_AXIS]={0,0,0};
@@ -35,20 +48,26 @@ void getMagnet(void)
    Wire.requestFrom(HMC5883_ADDRESS,6,true);
    
    magnetRaw[XAXIS]=Wire.read()<<8|Wire.read();
-   magnetRaw[YAXIS]=(Wire.read()<<8|Wire.read())*-1;
    magnetRaw[ZAXIS]=(Wire.read()<<8|Wire.read())*-1;
+   magnetRaw[YAXIS]=(Wire.read()<<8|Wire.read())*-1;
    
+}
+
+void calibrateMagnetometer(){
+     magnetVal[XAXIS]=M1*(magnetRaw[XAXIS]-B1)+M2*(magnetRaw[YAXIS]-B2)+M3*(magnetRaw[ZAXIS]-B3);
+     magnetVal[YAXIS]=M4*(magnetRaw[XAXIS]-B1)+M5*(magnetRaw[YAXIS]-B2)+M6*(magnetRaw[ZAXIS]-B3);
+     magnetVal[ZAXIS]=M7*(magnetRaw[XAXIS]-B1)+M8*(magnetRaw[YAXIS]-B2)+M9*(magnetRaw[ZAXIS]-B3);
 }
 
 void printMagnet(void)
 {
-  Serial.print(magnetRaw[XAXIS]);Serial.print('\t');
-  Serial.print(magnetRaw[YAXIS]);Serial.print('\t');
-  Serial.print(magnetRaw[ZAXIS]);Serial.print('\n');
+  Serial.print(magnetVal[XAXIS]);Serial.print('\t');
+  Serial.print(magnetVal[YAXIS]);Serial.print('\t');
+  Serial.print(magnetVal[ZAXIS]);Serial.print('\n');
 }
 
 void getHeading(){
-  heading=(float)atan2((float)magnetRaw[YAXIS],(float)magnetRaw[XAXIS])*180/PI;
+  heading=(float)atan2((float)magnetVal[YAXIS],(float)magnetVal[XAXIS])*180/PI;
  
   heading+=DEC_ANGLE;
   
