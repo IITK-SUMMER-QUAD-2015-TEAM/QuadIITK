@@ -33,9 +33,9 @@ void setupFourthOrder(void)
 
 void fourthOrderFilter(void)
 {
-   computeFourthOrder(accelRate[XAXIS],&fourthOrder[XAXIS]);
-   computeFourthOrder(accelRate[YAXIS],&fourthOrder[YAXIS]);
-   computeFourthOrder(accelRate[ZAXIS],&fourthOrder[ZAXIS]);
+   filteredAccel[XAXIS]=computeFourthOrder(accelRate[XAXIS],&fourthOrder[XAXIS]);
+   filteredAccel[YAXIS]=computeFourthOrder(accelRate[YAXIS],&fourthOrder[YAXIS]);
+   filteredAccel[ZAXIS]=computeFourthOrder(accelRate[ZAXIS],&fourthOrder[ZAXIS]);
 }
 
 float computeFourthOrder(float currentInput,struct fourthOrderFilter *filterParameters)
